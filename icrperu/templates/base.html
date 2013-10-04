@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<title>{% block title%}Title Base{% endblock %}</title>
+	<link rel="shortcut icon" href="/media/resource/ico/icrperu.ico" type="image/x-icon">
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.js"></script>
+	{% block bootstrap %}
+	<link rel="stylesheet" href="/media/bootstrap/css/bootstrap.css">
+	<script src="/media/bootstrap/js/bootstrap.js"></script>
+	{% endblock %}
+	<link rel="stylesheet" href="/media/css/style-int.css">
+</head>
+<body>
+	<header>
+		{% block header %}
+			{% include 'logistica/includes/logistica-menu.html' %}
+		{% endblock %}
+	</header>
+	<section>
+	{% block content %}
+	{% endblock %}	
+	</section>
+	<div id="space"></div>
+	<footer></footer>
+</body>
+</html>
