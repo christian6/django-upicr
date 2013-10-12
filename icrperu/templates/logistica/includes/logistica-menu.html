@@ -6,41 +6,42 @@
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 		</button>
-		<a href="{% url 'vw_logistica_home' %}" class="navbar-brand">
-      <img id="icrlogo" src="/media/resource/images/icrlogo.png" alt="">
-      Modulo Logistica
-    </a>
+    
+    <div class="navbar-brand">
+      <a href="http://190.41.246.91/web/"><img id="icrlogo" src="/media/resource/images/icrlogo.png" ></a>
+      <a href="{% url 'vw_logistica_home' %}">
+        Modulo Logistica
+      </a>  
+    </div>
 	</div>
 	<!-- Collect the nav links, forms, and other content for toggling -->
   <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
     <ul class="nav navbar-nav">
-      <li class="active"><a href="#"><span class="glyphicon  glyphicon-home"></span></a></li>
-      <li><a href="#">Link</a></li>
+      <li class="active"><a href="{% url 'vw_logistica_home' %}"><span class="glyphicon  glyphicon-home"></span></a></li>
+      <!--<li><a href="#">Link</a></li>-->
       <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sumnistro <b class="caret"></b></a>
         <ul class="dropdown-menu">
-          <li><a href="#">Action</a></li>
-          <li><a href="#">Another action</a></li>
-          <li><a href="#">Something else here</a></li>
-          <li><a href="#">Separated link</a></li>
-          <li><a href="#">One more separated link</a></li>
+          <li><a href="{% url 'vw_aprobar_suministro' %}">Aprobar Suminsitro</a></li>
+          <li><a href="{% url 'vw_cotiza_suministro' %}">Generar Cotización</a></li>
         </ul>
       </li>
     </ul>
-    <form class="navbar-form navbar-left" role="search">
-      <div class="form-group">
-        <input type="text" class="form-control" placeholder="Search">
-      </div>
-      <button type="submit" class="btn btn-default">Submit</button>
-    </form>
     <ul class="nav navbar-nav navbar-right">
       <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Nombre <b class="caret"></b></a>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span> {{ request.session.nomicr }} <b class="caret"></b></a>
         <ul class="dropdown-menu">
-          <p>
-            {{dni}}
-          </p>
-          <li><a href="#"><span class="glyphicon glyphicon-log-out"></span> Cerrar Session</a></li>
+          <li>
+            <div class="bs-user-data">
+                <h6><strong>
+                Dni : {{ request.session.dniicr }}<br />
+                user: {{ request.session.usericr }}<br />
+                Cargo: {{ request.session.caricr }}
+              </strong>
+                </h6>
+            </div>
+          </li>
+          <li><a href="{% url 'vw_logout' %}"><span class="glyphicon glyphicon-log-out"></span> Cerrar Session</a></li>
         </ul>
       </li>
     </ul>

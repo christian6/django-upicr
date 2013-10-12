@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block title %}Aprobar Orden de Suminsitro{% endblock %}
+{% block script %}
+	<script src="/media/js/logistica/suministro.js"></script>
+{% endblock %}
+{% block content %}
+<div class="container">
+	<div class="well">
+		<div class="row show-grid">
+			<div class="col-md-12">
+				<h3 class="text-primary">Aprobar Orden de Suminsitro</h3>
+				<div class="bs-callout bs-callout-warning">
+					<div class="row show-grid">
+						<div class="col-lg-12">
+							<div class="form-group has-info">
+								<label class="radio-inline text-info">
+									<input type="radio" name="btns" value="n" onChange="radiosearch(this);"> Nro Suminsitro
+								</label>
+								<label class="radio-inline text-info">
+									<input type="radio" name="btns" value="f" onChange="radiosearch(this);"> Fechas
+								</label>
+							</div>
+						</div>
+
+						<div class="col-lg-2">
+							<div class="form-group has-info">
+								<label for="nusum" class="control-label">Alamcén</label>
+								<select name="cboal" id="cboal" class="form-control input-sm">
+									{% for row in listal %}
+										<option value="{{row.almacenid}}">{{row.descri}}</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+						<div class="col-lg-2">
+							<div class="form-group has-info">
+								<label for="nusum" class="control-label">Nro Suminstro</label>
+								<input type="text" class="form-control input-sm" id="nros" disabled />
+							</div>
+						</div>
+						<div class="col-lg-2">
+							<div class="form-group has-info">
+								<label for="nusum" class="control-label">Fecha Inicio</label>
+								<input type="text" class="form-control input-sm" id="fi" disabled />
+							</div>
+						</div>
+						<div class="col-lg-2">
+							<div class="form-group has-info">
+								<label for="nusum" class="control-label">Fecha Fin</label>
+								<input type="text" class="form-control input-sm" id="ff" disabled />
+							</div>
+						</div>
+						<div class="col-lg-2">
+							<div class="form-group">
+								<button class="btn btn-lg btn-warning tblack" onClick="listsuminstro();"><span class="glyphicon glyphicon-search"></span> Buscar</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-12">
+				<div class="table-responsive">
+					<table class="table table-condensed table-c-info">
+						<thead>
+							<tr>
+							<th></th>
+							<th>Nro Suministro</th>
+							<th>Almacen</th>
+							<th>Realizado</th>
+							<th>Generado</th>
+							<th>Requerido</th>
+							<th>Estado</th>
+							<th>Ver</th>
+							</tr>
+						</thead>
+						<tbody id="tbld">
+							
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade in modal-backdrop-info" id="mds">
+	<div class="modal-dialog largemo">
+		<div class="modal-content c-info">
+			<div class="modal-header">
+				<a data-dismiss="modal" class="close">&times;</a>
+				<h4 class="text-info">Detalle de Suministro <span id="nro"></span></h4>
+			</div>
+			<div class="modal-body">
+				<div id="aobs" class="alert fade in alert-info hide">
+					<a class="close" href="#" onClick="showobs();">&times;</a>
+					<strong>Observación</strong>
+					<p id="obs"></p>
+				</div>
+				<table class="table table-condensed table-c-warning">
+					<thead>
+						<tr>
+							<th>Codigo</th>
+							<th>Descripción</th>
+							<th>Medida</th>
+							<th>Unidad</th>
+							<th>Cantidad</th>
+						</tr>
+					</thead>
+					<tbody id="dtbls">
+						
+					</tbody>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-warning tblack btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancelar</button>
+				<button class="btn btn-info pull-left tblack" onClick="showobs();"><span class="glyphicon glyphicon-align-justify"></span> Observación</button>
+				<button class="btn btn-danger tblack" onClick="anularSuministro();"><span class="glyphicon glyphicon-ban-circle"></span> Anular</button>
+				<button class="btn btn-primary" onClick="aprobarSuministro();"><span class="glyphicon glyphicon-ok"></span> Aprobar</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal-backdrop modal-backdrop-white full-screen hide"></div>
+{% endblock %}

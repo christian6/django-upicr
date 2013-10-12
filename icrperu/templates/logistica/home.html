@@ -1,9 +1,85 @@
 {% extends 'base.html' %}
+{% block title %}Bienvenido a Logistica{% endblock %}
+{% block styleint %}{% endblock %}
+{% block style %}
+<link rel="stylesheet" href="/media/css/style-logistica/home.css">
+{% endblock %}
 {% block content %}
-<div class="container well">
-	<h1>
-		Bienvenido a Logistica
-		<span class="glyphicon glyphicon-phone"></span>
-	</h1>
-</div>
+<div class="view">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3">
+        	<div class="well">
+          <div class="nav-header">Estados</div>
+            <div class="msg">
+              <div class="row">
+                <!-- stadistic -->
+                
+              </div>  
+            </div>
+        </div>
+        </div>
+        <div class="col-md-9">
+        	<div class="well">
+	          <div class="nav-header">
+	            <i class="icon-inbox"></i> mensajeria
+	            
+	          </div>
+	          <div class="msg">
+	            <div id="message">
+	              
+	            </div>
+	          </div>
+	        </div>
+   		</div>
+      </div>
+    </div>
+  </div>
+
+    <div id="send" class="modal fade in hide">
+    <a class="close" data-dismiss="modal">×</a>
+    <div class="modal-body">
+      <span id="m" class="m">
+        <h4>Enviando Mensaje</h4>
+      </span>
+      <div class="container-fluid">
+        <div class="control-group">
+          <label for="label"><strong>Enviar a:</strong></label>
+          <div class="controls">
+            <select class="span3" name="cboemp" id="cboemp">
+              <!-- here list employee -->
+            </select>
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="label">Asunto:</label>
+          <div class="controls">
+            <input type="text" name="txtasunto" id="txtasunto" placeholder="Asunto" title="Ingrese Asunto a tratar" class="span4">
+          </div>
+        </div>
+        <div class="control-group">
+          <div class="controls">
+            <textarea name="txtbody" id="txtbody" cols="5" rows="10"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="Button" onClick="send_display(false);" class="btn">Cancelar</button>
+      <button type="Button" onClick="send();" class="btn btn-primary">Enviar</button>
+    </div>
+  </div>
+  
+{% endblock %}
+{% block footer %}
+<nav class="men">
+	<nav class="navbar navbar-fixed-botton navbar-default bs-docs-nav">
+  <ul class="nav navbar-nav navbar-right">
+    <li class="divider-vertical"></li>
+    <li><a href="javascript:send_display(true);"><span class="glyphicon glyphicon-envelope"></span>  <strong>Redactar</strong></a></li>
+    <li class="divider-vertical"></li>
+    <li><a href="javascript:refresh_mail();"><span class="glyphicon glyphicon-refresh"></span> <b>Actualizar</b></a></li>
+  </ul>
+	</nav>
+</nav>
 {% endblock %}

@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block title %}Cotizar con Orden de Suministro{% endblock %}
+{% block script %}
+<script src="/media/js/logistica/sumcotizacion.js"></script>
+{% endblock %}
+{% block content %}
+<div class="container">
+	<div class="well">
+		<h3 class="text-warning">Generar Cotización de Orden de Suministro</h3>
+		<div class="table-responsive">
+			<table class="table table-hover table-bordered table-condensed table-c-warning">
+				<thead>
+					<tr>
+						<!--<th></th>-->
+						<th></th>
+						<th>Nro Suministro</th>
+						<th>Almacen</th>
+						<th>Realizado por</th>
+						<th>F. Realizado</th>
+						<th>F. Requerido</th>
+						<th>Generar</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for x in lista %}
+					<tr>
+						<td>{{forloop.counter}}</td>
+						<td>{{x.nrosuministro}}</td>
+						<td>{{x.descri}}</td>
+						<td>{{x.empn}}</td>
+						<td>{{x.fecha|date:"SHORT_DATE_FORMAT"}}</td>
+						<td>{{x.fecreq|date:"SHORT_DATE_FORMAT"}}</td>
+						<td class="text-center"><button class="btn btn-warning btn-xs tblack" onClick="showfirst('{{x.nrosuministro}}');"><span class="glyphicon glyphicon-import"></span></button></td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<div id="mcotiza" class="modal fade in">
+	<div class="modal-dialog">
+		<div class="modal-content c-warning">
+			<div class="modal-header">
+				<a href="#" data-dismiss="modal" class="close">&times;</a>
+				<h4>Generar Solicitud de Cotización</h4>
+			</div>
+			<div class="modal-body">
+				<div class="form-group has-info">
+					<label for="nros" class="control-label">Nro Suministro</label>
+					<input type="text" id="nros" class="form-control input-sm" disabled>
+				</div>
+				<div class="form-group has-info">
+					<label for="tdni" class="control-label">DNI</label>
+					<input type="text" id="tdni" class="form-control input-sm" value="{{request.session.dniicr}}" disabled>
+				</div>
+				<div class="form-group has-info">
+					<label for="tnom" class="control-label">Empleado</label>
+					<input type="text" class="form-control input-sm" value="{{request.session.nomicr}}" disabled>
+				</div>
+				<div class="form-group has-info">
+					<label for="fec" class="control-label">Fecha</label>
+					<input type="text" class="form-control input-sm" id="fec">
+				</div>
+				<div class="form-group has-info">
+					<label for="obs" class="control-label">Observación</label>
+					<textarea name="obs" id="obs" rows="4" class="form-control input-sm"></textarea>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-warning tblack pull-left"><span class="glyphicon glyphicon-remove"></span> Cancelar</button>
+				<button class="btn btn-primary" onClick="showlast();"><span class="glyphicon glyphicon-chevron-right"></span> Continuar</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="mpro" class="modal fade in">
+	<div class="modal-dialog largemo">
+		<div class="modal-content c-warning">
+			<div class="modal-header">
+				<a data-dismiss="modal" class="close">&times;</a>
+				<h4 class=text-primary>Generar Cotizacion a Proveedor</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row show-grid">
+					<div class="col-lg-12">
+						<div class="form-group has-info">
+							<label for="pro" class="control-label">Proveedores</label>
+							<select name="pro" id="pro" class="form-control input-sm">
+								{% for row in listp %}
+								<option value="{{row.rucproveedor}}">{{row.razonsocial}}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+					<div class="col-lg-12">
+						<div class="table-responsive">
+							<table class="table table-condensed table hover table-c-info">
+								<caption>
+									<div class="form-group has-info pull-left">
+										<label class="radio-inline text-info">
+											<input type="radio" name="btns" value="f" onChange="selectedItem();"> Seleccionar
+										</label>
+										<label class="radio-inline text-info">
+											<input type="radio" name="btns" value="c" onChange="selectedItem();"> Limpiar
+										</label>
+									</div>
+								</caption>
+								<thead>
+									<tr>
+										<th></th>
+										<th>Codigo</th>
+										<th>Descripción</th>
+										<th>Medida</th>
+										<th>Unidad</th>
+										<th>Cantidad</th>
+										<th>Chk</th>
+									</tr>
+								</thead>
+								<tbody id="dsum">
+									
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-warning pull-left tblack"><span class="glyphicon glyphicon-floppy-disk"></span> Cotizar a Proveedor</button>
+				<button class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span> Terminar</button>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

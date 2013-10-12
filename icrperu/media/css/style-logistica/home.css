@@ -1,0 +1,99 @@
+html {
+  background: url("/media/resource/background/logistica.jpg") no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  position: static;
+}
+body{
+  padding-top: 3%;
+}
+#icrlogo{
+  -webkit-border-radius: .2em;
+  -moz-border-radius: .2em;
+  -moz-border-radius: .2em;
+  -ms-border-radius: .2em;
+  border-radius: .2em;
+  -webkit-box-shadow: 0 0 .5em rgba(255,255,255,1);
+  -moz-box-shadow: 0 0 .5em rgba(255,255,255,1);
+  -o-box-shadow: 0 0 .5em rgba(255,255,255,1);
+  -ms-box-shadow: 0 0 .5em rgba(255,255,255,1);
+  box-shadow: 0 0 .5em rgba(255,255,255,1);
+  height: 1.2em;
+  width: 1.4em;
+}
+.view{
+  background-color: rgba(240,240,240,.6);
+  /*border-style: solid;*/
+  border-radius: 1em;
+  box-shadow: 0 0 1em rgba(0,0,0,1);
+  left: 50%;
+  margin: 0 auto;
+  margin-top: 4%;
+  margin-left: -40%;
+  padding: 1em;
+  position: fixed;
+  width: 80%;
+}
+.icr-img {
+  border-radius: 3px;
+  box-shadow: 0px 0px 5px #fff;
+  height: 1.2em;
+  width: 1.5em;
+}
+.msg{
+  background-color: rgba(255,255,255,1);
+  border-radius: .5em;
+  padding: .5em;
+}
+.label-inverse{
+  width: 96%;
+}
+#send{
+  width: 60%;
+  margin-left: -28%;
+}
+.well{
+  opacity: 0.8;
+  filter: alpha(opacity=80);
+}
+.men{
+  bottom:-1.5em;
+  clear: both;
+  height: 4em;
+  left: 0;
+  letter-spacing: 0em;
+  padding: 0;
+  position: fixed;
+  width: 100%;
+}
+#txtbody{
+  max-width: 53em;
+  width: 100%;
+  max-height: 10em;
+}
+#m{
+  background-color: #ffffAA;
+  border-radius: 1em;
+  border-style: solid;
+  border-width: 2px;
+  box-shadow: 0 0 1em rgba(20,20,20,1);
+  color: #000;
+  display: none;
+  left: 45%;
+  padding: 1em;
+  position: absolute;
+  top: 45%;
+}
+dl dt,dl dd{
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  margin-bottom: -5px;
+  color: #333333;
+}
+dl{ margin-left: 1em; margin-top: -3em; }
+#message{
+  max-height: 30em;
+  overflow-y: scroll;
+}
