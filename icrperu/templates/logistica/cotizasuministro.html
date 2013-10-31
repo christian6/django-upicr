@@ -68,7 +68,7 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button class="btn btn-warning tblack pull-left"><span class="glyphicon glyphicon-remove"></span> Cancelar</button>
+				<button class="btn btn-warning tblack pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancelar</button>
 				<button class="btn btn-primary" onClick="showlast();"><span class="glyphicon glyphicon-chevron-right"></span> Continuar</button>
 			</div>
 		</div>
@@ -126,10 +126,11 @@
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button class="btn btn-warning pull-left tblack"><span class="glyphicon glyphicon-floppy-disk"></span> Cotizar a Proveedor</button>
-				<button class="btn btn-primary"><span class="glyphicon glyphicon-ok"></span> Terminar</button>
+				<button class="btn btn-warning pull-left tblack" onClick="generar_cotizacion_proveedor();"><span class="glyphicon glyphicon-floppy-disk"></span> Cotizar a Proveedor</button>
+				<button class="btn btn-primary" onClick="finish();"><span class="glyphicon glyphicon-ok"></span> Terminar</button>
 			</div>
 		</div>
 	</div>
 </div>
+<div class="modal-backdrop modal-backdrop-white full-screen hide"></div>
 {% endblock %}

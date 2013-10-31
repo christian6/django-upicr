@@ -5660,6 +5660,9 @@ body.modal-open,
 .tblack{
   color: #2D2D2D;
 }
+.twhite{
+  color: #FFFFFF;
+}
 
 .modal.fade .modal-dialog {
   -webkit-transform: translate(0, -25%);
@@ -6967,6 +6970,27 @@ td.visible-print {
   background-color: #f2dede;
   border-color: #eed3d7;
 }
+/* Colors background Forte */
+.c-green{
+  background-color: #47a447;
+  border-color: #d6e9c6;
+}
+.c-blue{
+  background-color: #2E9AFE;
+  border-color: #bce8f1;
+}
+.c-yellow{
+  background-color: #F3D962;
+  border-color: #fbeed5;
+}
+.c-red{
+  background-color: #DA4543;
+  border-color: #eed3d7;
+}
+
+
+
+
 /* Zona Span Bootstrap 2.0 */
 .span6 {
   width: 460px;

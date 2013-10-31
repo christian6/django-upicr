@@ -19,10 +19,19 @@
     <ul class="nav navbar-nav">
       <li class="active"><a href="{% url 'vw_logistica_home' %}"><span class="glyphicon  glyphicon-home"></span></a></li>
       <!--<li><a href="#">Link</a></li>-->
+      <!-- Suminstro -->
       <li class="dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sumnistro <b class="caret"></b></a>
         <ul class="dropdown-menu">
           <li><a href="{% url 'vw_aprobar_suministro' %}">Aprobar Suminsitro</a></li>
+          <li><a href="{% url 'vw_cotiza_suministro' %}">Generar Cotización</a></li>
+        </ul>
+      </li>
+      <!-- Cotizacion -->
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Cotizaciones <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li><a href="{% url 'vw_cotizacion_simple' %}">Cotización Materiales</a></li>
           <li><a href="{% url 'vw_cotiza_suministro' %}">Generar Cotización</a></li>
         </ul>
       </li>

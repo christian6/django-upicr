@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es">
+<head>
+	{% if request.session.rucpro|length_is:"11" %}
+		<!--<meta http-equiv="Refresh" content="0;url=home/">-->
+	{% endif %}
+	<meta charset="UTF-8">
+	<title>Bienvenido Proveedor</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<link rel="shortcut icon" href="/media/resource/ico/icrperu.ico" type="image/x-icon">
+
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.js"></script>
+
+	<link rel="stylesheet" href="/media/css/style-proveedor/home.css">
+	<link rel="stylesheet" href="/media/bootstrap/css/bootstrap.css">
+	<script src="/media/bootstrap/js/bootstrap.js"></script>
+	<link rel="stylesheet" href="/media/css/msgBoxLight.css">
+	<script src="/media/js/msgBox.js"></script>
+	<script src="/media/js/md5-min.js"></script>
+	<script src="/media/js/proveedor/inicio.js"></script>
+</head>
+<body>
+	<header>
+		<h1 id="tit">ICR PERU S.A. -> PROVEEDOR {{request.session.rucpro}}</h1>
+	</header>
+	<section>
+		<div class="back-log">
+			<div class="content-log">
+				<div class="login">
+					<table>
+						<tbody>
+							<tr>
+								<td><label for="username">Username</label></td>
+								<td>
+									<div class="input-group input-group-sm">
+										<span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+										<input type="text" id="username" class="form-control input-sm">
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td><label for="passwd">Password</label></td>
+								<td>
+									<div class="input-group input-group-sm">
+										<span class="input-group-addon"><span class="glyphicon glyphicon-circle-arrow-right"></span></span>
+										<input type="password" id="passwd" class="form-control input-sm">
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									<button id="accept" class="btn btn-warning tblack" type="Button">Ingresar</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="row show-grid">
+						<div class="col-md-12">
+							<span class="error hide">Usuario o Password Incorrecto!</span>
+						</div>
+						<div class="col-md-12">
+							<small class="pass pull-right">Olvido su password?</small>	
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+	</section>
+	<footer>
+	</footer>
+</body>
+</html>

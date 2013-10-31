@@ -134,7 +134,8 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'icrperu.apps.logistica',
-    'icrperu.apps.logistica.inclogistica'
+    'icrperu.apps.logistica.inclogistica',
+    'icrperu.apps.proveedor',
 )
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'

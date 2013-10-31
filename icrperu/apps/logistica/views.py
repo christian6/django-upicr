@@ -32,7 +32,7 @@ def view_securitylog(request):
 
 """
 ###
-## 	Module of Suministro
+## 	Part Suministro
 ###
 """
 def view_index(request):
@@ -57,8 +57,24 @@ def view_cotiza_suministro(request):
 		lista = dictfetchall(cn)
 		cn.close()
 		cn = connection.cursor()
-		cn.execute("SELECT rucproveedor,razonsocial FROM admin.proveedor WHERE esid LIKE '15'")
+		cn.execute("SELECT rucproveedor,razonsocial FROM admin.proveedor WHERE esid LIKE '15' ORDER BY razonsocial ASC")
 		listp = dictfetchall(cn)
 		cn.close()
 		ctx = { 'lista':lista, 'listp':listp }
 		return render_to_response('logistica/cotizasuministro.html',ctx,context_instance=RequestContext(request))
+"""
+###
+## 	Part Cotizacion
+###
+"""
+def view_cotizacion_simple(request):
+	cn =  connection.cursor()
+	cn.execute("SELECT DISTINCT matnom FROM admin.materiales ORDER BY matnom ASC")
+	lmat = dictfetchall(cn)
+	cn.close()
+	cn = connection.cursor()
+	cn.execute("SELECT DISTINCT rucproveedor,razonsocial FROM admin.proveedor WHERE esid LIKE '15' ORDER BY razonsocial ASC")
+	lpro = dictfetchall(cn)
+	cn.close()
+	ctx = { 'lmat':lmat, 'lpro': lpro }
+	return render_to_response('logistica/cotizacion_simple.html',ctx,context_instance=RequestContext(request))

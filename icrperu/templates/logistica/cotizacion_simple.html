@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% block title %}Cotización de Materiales{% endblock %}
+{% block script %}
+<script src="/media/js/autoComplete.js"></script>
+<script src="/media/js/logistica/cotizasimple.js"></script>
+{% endblock %}
+{% block style %}
+<style>
+  .ui-autocomplete {
+  	margin-left: 1em;
+    max-height: 16em;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+  }
+  /* IE 6 doesn't support max-height
+   * we use height instead, but this forces the menu to always be this tall
+   */
+  * html .ui-autocomplete {
+    height: 16em;
+  }
+  </style>
+{% endblock %}
+{% block content %}
+<div class="container">
+	<div class="well">
+		<h3 class="text-primary">Cotizar Materiales</h3>
+		<input type="hidden" id="dni" value="{{request.session.dniicr}}">
+		<div class="row show-grid">
+			<div class="col-md-12">
+				<div class="bs-callout bs-callout-info">
+					<div class="row show-grid">
+						<div class="col-md-12">
+							<div class="btn-group">
+								<button type="button" class="btn btn-warning tblack" onClick="btnsearch();"><span class="glyphicon glyphicon-search"></span><span class="visible-md visible-lg visible-sm">Buscar</span></button>
+								<button type="button" class="btn btn-warning tblack" onClick="list_tmp_cotiza();"><span class="glyphicon glyphicon-list"></span><span class="visible-md visible-lg visible-sm">Listar Detalle</span></button>
+								<button type="button" class="btn btn-warning tblack" onClick="deletetmp();"><span class="glyphicon glyphicon-remove"></span><span class="visible-md visible-lg visible-sm">Eliminar Tmp</span></button>
+								<button type="button" class="btn btn-warning tblack" onClick="showCotiza();"><span class="glyphicon glyphicon-floppy-disk"></span>  <span class="visible-md visible-lg visible-sm">Guardar Cambios</span></button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-12">
+				<div class="col-md-6">
+					<div class="ui_widget form-group has-info">
+						<label for="mat" class="control-label">Descripción</label>
+						<select name="mat" id="combobox" class="form-control hide">
+							{% for row in lmat %}
+							<option value="{{row.matnom}}">{{row.matnom}}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group has-info">
+						<label for="med" class="control-label">Medida</label>
+						<select name="med" id="med" class="form-control" onClick="brinddetailt();"></select>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="well c-red">
+						<div class="table-responsive">
+							<table class="table table-condensed twhite">
+								<tbody id="tdet"></tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="well c-danger">
+						<div class="row show-grid">
+							<div class="col-md-5">
+								<div class="form-group has-error">
+									<label for="cant" class="control-label">Ingrese Cantidad</label>
+									<input type="number" class="form-control" min="1" max="9999" id="cant">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<button type="button" class="btn btn-lg btn-danger" onClick="addmatmtmp();"><span class="glyphicon glyphicon-plus"></span> Agregar</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+		<div class="row show-grid">
+			<div class="col-md-12">
+				<div class="table-responsive">
+					<table class="table table-hover table-condensed table-c-danger">
+						<thead>
+							<tr>
+								<th></th>
+								<th>Codigo</th>
+								<th>Descripción</th>
+								<th>Medida</th>
+								<th class="text-center">Unidad</th>
+								<th class='text-center'>Cantidad</th>
+								<th class='text-center'>Editar</th>
+								<th class='text-center'>Eliminar</th>
+							</tr>
+						</thead>
+						<tbody id="dtbl">
+							
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade in" id="mcot">
+	<div class="modal-dialog">
+		<div class="modal-content c-warning">
+			<div class="modal-header">
+				<a data-dismiss="modal" class="close">&times;</a>
+				<h3 class="text-warning">Generar Cotización</h3>
+			</div>
+			<div class="modal-body">
+				<div class="row show-grid">
+					<div class="col-md-4">
+						<div class="form-group has-info">
+							<label for="cdni" class="control-label">DNI</label>
+							<input type="text" class="form-control input-sm" value="{{request.session.dniicr}}" disabled>
+						</div>
+					</div>
+					<div class="col-md-8">
+						<div class="form-group has-info">
+							<label for="cdni" class="control-label">Nombres</label>
+							<input type="text" class="form-control input-sm" value="{{request.session.nomicr}}" disabled>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="form-group has-info">
+							<label class="control-label">Fecha Requerida</label>
+							<input type="text" class="form-control" id="fec">
+						</div>
+					</div>
+					<div class="col-md-11">
+						<div class="form-group has-info">
+							<label for="obs" class="control-label">Observación</label>
+							<textarea name="obs" id="obs" class="form-control"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancelar</button>
+				<button class="btn btn-primary" onClick="save_cotiza();"><span class="glyphicon glyphicon-chevron-right"></span> Continuar</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade in" id="mdet">
+	<div class="modal-dialog largemo">
+		<div class="modal-content c-success">
+			<div class="modal-header">
+				<a data-dismiss="modal" class="close">&times;</a>
+				<h3 class="text-primary">Cotizar a Proveedor <span id="ncot"></span></h3>
+			</div>
+			<div class="modal-body">
+				<div class="row show-grid">
+					<div class="col-md-6">
+						<div class="form-group has-info">
+							<label for="pro" class="control-label">Proveedor</label>
+							<select name="pro" id="pro" class="form-control">
+								{% for row in lpro %}
+								<option value="{{row.rucproveedor}}">{{row.razonsocial}}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="row show-grid">
+					<div class="col-md-12">
+						<div class="table-responsive">
+							<table class="table table-condensed table-hover table-c-warning">
+								<caption>
+									<div class="alert alert-info col-md-3 alert-block">
+										<label class="radio-inline pull-left" onChange="selectedchk();">
+											<input type="radio" name="rmat" value="f"> Todo
+										</label>
+										<label class="radio-inline pull-left" onChange="selectedchk();">
+											<input type="radio" name="rmat" value="c"> Ninguno
+										</label>
+									</div>
+								</caption>
+								<thead>
+									<tr>
+										<th></th>
+										<th>Codigo</th>
+										<th>Descripción</th>
+										<th>Medida</th>
+										<th>Unidad</th>
+										<th>Cantidad</th>
+										<th>Chk</th>
+									</tr>
+								</thead>
+								<tbody id="tbld"></tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-warning pull-left tblack" onClick="generar_cotizacion_proveedor();"><span class="glyphicon glyphicon-floppy-disk"></span> Cotizar Proveedor</button>
+				<button class="btn btn-primary" onClick="finish_cotiza();"><span class="glyphicon glyphicon-ok"></span> Terminar</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal-backdrop modal-backdrop-white full-screen hide"></div>
+{% endblock %}

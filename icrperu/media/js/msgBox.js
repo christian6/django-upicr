@@ -159,7 +159,7 @@ function msg (options) {
         //divMsgBox.css("background-image", "url('"+msgBoxImagePath+"msgBoxBackGround.png')");
         divMsgBoxBackGround.css({ opacity: options.opacity });
         options.beforeShow();
-        divMsgBoxBackGround.css({ "width": $(document).width(), "height": getDocHeight() });
+        //divMsgBoxBackGround.css({ "width": $(document).width(), "height": getDocHeight() });
         $(divMsgBoxId+","+divMsgBoxBackGroundId).fadeIn(0);
         divMsgBox.animate({ opacity: 1, "top": top, "left": left }, 200);
         setTimeout(options.afterShow, 200);
@@ -234,7 +234,7 @@ function msg (options) {
         }
     });
 };
-
+/*  ---  Functions msgBox Pre ---*/
 function msgError (title,content,close) {
     if (title == null) {title='Error';}
     if (content == null) {content='Si estas viendo esto es por que fallé';}
@@ -244,7 +244,20 @@ function msgError (title,content,close) {
         title : title,
         content : content,
         type : 'error',
-        autoClose : false,
+        autoClose : close,
+        opacity : 0.6
+    });
+}
+function msgWarning (title,content,close) {
+    if (title == null) {title='Error';}
+    if (content == null) {content='oh no! Al parecer tienes un error';}
+    if (close == null) {close=true;}
+    console.log(title,' '+close);
+    $.msgBox({
+        title : title,
+        content : content,
+        type : 'warning',
+        autoClose : close,
         opacity : 0.6
     });
 }
