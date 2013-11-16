@@ -1,9 +1,6 @@
 <!doctype html>
 <html lang="es">
 <head>
-	{% if request.session.rucpro|length_is:"11" %}
-		<!--<meta http-equiv="Refresh" content="0;url=home/">-->
-	{% endif %}
 	<meta charset="UTF-8">
 	<title>Bienvenido Proveedor</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,7 +21,7 @@
 </head>
 <body>
 	<header>
-		<h1 id="tit">ICR PERU S.A. -> PROVEEDOR {{request.session.rucpro}}</h1>
+		<h1 id="tit">ICR PERU S.A. > PROVEEDOR</h1>
 	</header>
 	<section>
 		<div class="back-log">

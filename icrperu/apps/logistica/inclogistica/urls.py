@@ -23,4 +23,10 @@ urlpatterns = patterns('icrperu.apps.logistica.inclogistica.views',
 	url(r'^lista/tmp/material/cotiza/$','ws_list_tmp_cotiza',name='inc_lista_tmp_cotiza'),
 	url(r'^save/proveedor/cotizacion/simple/$','ws_cotiza_proveedor_simple',name='inc_save_proveedor_cotiza_simple'),
 	url(r'^finish/cotizacion/simple/$','ws_finish_cotiza_proveedor_simple',name='inc_finish_cotiza_simple'),
+	# Compare
+	url(r'^compare/supplier/cotizacion/$','ws_compare_supplier',name='inc_compare_supplier'),
+	url(r'^consulting/money/supplier/$','ws_obtener_money_supplier',name='inc_obtener_money_supplier'),
+	url(r'^consulting/mat/buy/$','ws_obtener_det_mat_buy'),
+	# -- Tipo de Cambio --
+	url(r'^consulting/type/change/money/$','ws_type_change_money'),
 )

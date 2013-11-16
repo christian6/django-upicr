@@ -245,7 +245,7 @@ function msgError (title,content,close) {
         content : content,
         type : 'error',
         autoClose : close,
-        opacity : 0.6
+        opacity : 0.8
     });
 }
 function msgWarning (title,content,close) {
@@ -258,6 +258,19 @@ function msgWarning (title,content,close) {
         content : content,
         type : 'warning',
         autoClose : close,
-        opacity : 0.6
+        opacity : 0.8
+    });
+}
+function msgInfo (title,content,close) {
+    if (title == null) {title='Mensage';}
+    if (content == null) {content='La transacción se realizo con exito!';}
+    if (close == null) {close=true;}
+    console.log(title,' '+close);
+    $.msgBox({
+        title : title,
+        content : content,
+        type : 'info',
+        autoClose : close,
+        opacity : 0.8
     });
 }

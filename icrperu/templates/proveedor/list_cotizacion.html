@@ -1,0 +1,68 @@
+{% extends 'basepro.html'%}
+{% block title %}Lista de Cotización{% endblock %}
+{% block style %}
+	<style>
+		.alert{
+			margin-top: .5em;
+			margin-bottom: 0em;
+		}
+		.modal-body{ padding-bottom: 0; }
+		.modal-footer{ padding-top: .5em; }
+	</style>
+{% endblock %}
+{% block script %}
+<script src="/media/js/proveedor/listcotizacion.js"></script>
+{% endblock %}
+{% block content %}
+<div class="container well c-success">
+	<h3 class="text-success"><span class="glyphicon glyphicon-list-alt"></span> Lista de Cotizaciones</h3>
+	<div class="row show-grid">
+		<div class="col-md-12">
+			{% for row in lcot %}
+			<div class="alert alert-info">
+				<a href="javascript:showkey('{{row.nrocotizacion}}');">
+					<b>{{forloop.counter}})  Nro Cotización {{row.nrocotizacion}}</b>
+					<b>Fecha :</b> {{row.fecha|date:"SHORT_DATE_FORMAT"}}
+					<b>Requerida :</b> {{row.fecreq}}
+					<span class="glyphicon glyphicon-check"></span>
+				</a>
+			</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+<div id="keyc" class="modal fade in">
+	<div class="modal-dialog" style="width: 20em;">
+		<div class="modal-content c-warning">
+			<div class="modal-header text-warning">
+				<a data-dismiss="modal" class="close">&times;</a>
+				<h4>Ingrese Key Generado</h4>
+			</div>
+			<div class="modal-body">
+				<input type="hidden" name="csrfmiddlewaretoken" value={{csrf_token}}>
+				<table>
+					<tbody>
+						<tr>
+							<td><label for="ruc" class="control-label text-warning">RUC</label></td>
+							<td><input type="text" id="ruc" class="form-control text-info input-sm" value="{{request.session.rucpro}}" disabled></td>
+						</tr>
+						<tr>
+							<td><label for="nro" class="control-label text-warning">Cotización</label></td>
+							<td><input type="text" id="nro" class="form-control text-info input-sm" value="" disabled></td>
+						</tr>
+						<tr>
+							<td><label for="ruc" class="control-label text-warning">Key</label></td>
+							<td><input type="text" id="key" class="form-control text-info input-sm" value="" maxlength="10" placeholder="SC********"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-warning pull-left tblack" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Salir</button>
+				<button class="btn btn-primary" onClick="valid();"><span class="glyphicon glyphicon-ok"></span> Continuar</button>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block footer %}{% endblock %}

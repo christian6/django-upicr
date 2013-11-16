@@ -18,5 +18,6 @@ urlpatterns = patterns('',
     url(r'^logistica/', include('icrperu.apps.logistica.urls')),
     url(r'^proveedor/', include('icrperu.apps.proveedor.urls')),
     url(r'^ws/logistica/', include('icrperu.apps.logistica.inclogistica.urls')),
+    url(r'^ws/proveedor/', include('icrperu.apps.proveedor.incproveedor.urls')),
     url(r'^media/(?P<path>.*)$','django.views.static.serve',{'document_root':settings.MEDIA_ROOT}),
 )

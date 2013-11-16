@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% block title %}Comparar Cotizaciones{% endblock %}
+{% block script %}
+<script src="/media/js/logistica/compare.js"></script>
+{% endblock %}
+{% block style %}
+<style>
+	.cocab{
+		border-radius: .6em;
+		padding-top: 1em;
+	}
+</style>
+{% endblock %}
+{% block content %}
+	<div class="container well">
+		<h3 class="text-primary">Comparar Cotizaciones {{nro}}</h3>
+		<input type="hidden" id="nro" value="{{nro}}">
+		<div class="bs-callout bs-callout-info">
+			<span>
+			{% for row in lsu %}
+				<p>
+					<span class="text-danger glyphicon glyphicon-ok-circle"></span> {{row.rucproveedor}} {{row.razonsocial}}
+					<input type="hidden" name="supplier" value="{{row.rucproveedor}}">
+					<input type="hidden" id="{{row.rucproveedor}}" value="{{row.razonsocial}}">
+				</p>
+			{% endfor %}
+			</span>
+		</div>
+		<h4>Comparar Precios de Proveedores</h4>
+		<em>Los precios que se encuentran en las columnas <strong>Editar</strong> son modificables.</em>
+		
+		<div class="table-responsive">
+			<table class="table table-condensed table-bordered table-hove table-c-danger">
+				<thead>
+					<tr class="c-blue">
+						<td colspan="7"></td>
+						{% for row in lsu %}
+						<th colspan="3" class="text-center">
+							<button class="btn btn-sm btn-warning"><span class="glyphicon glyphicon-shopping-cart"></span> Comprar</button>
+						</th>
+						{% endfor %}
+					</tr>
+					<tr>
+						<th></th>
+						<th class="text-center"></th>
+						<th class="text-center">Codigo</th>
+						<th class="text-center">Descripción</th>
+						<th class="text-center">Medida</th>
+						<th class="text-center">Und</th>
+						<th class="text-center">Cantidad</th>
+						{% for row in lsu %}
+							<th class="text-center" style="width: 8em;">{{row.rucproveedor}}</th>
+							<th class="text-center" style="width: 8em;">Editar</th>
+							<th class="text-center">Marca</th>
+						{% endfor %}
+					</tr>
+					<tr>
+						<th colspan="7">
+							<label class="radio-inline"><input type="radio" name="rbtn" value="f" onChange="selectCheck();"> Todos</label>
+							<label class="radio-inline"><input type="radio" name="rbtn" value="n" onChange="selectCheck();"> Ninguno</label>
+						</th>
+						{% for row in lsu %}
+						<th colspan="3" class="text-center" id="m{{row.rucproveedor}}"></th>
+						{% endfor %}
+					</tr>
+				</thead>
+				<tbody id="det" style="font-size: 12px;">
+				</tbody>
+				<tfoot>
+					<tr class="c-yellow">
+						<td colspan="7" class="text-right"> <strong>Total</strong> </td>
+						{% for row in lsu %}
+							<th id="t{{row.rucproveedor}}" class="text-center"></th>
+							<th id="tm{{row.rucproveedor}}"></th>
+							<th><button class="btn btn-xs btn-info tblack" onClick="updatePrice('{{row.rucproveedor}}');"><span class="glyphicon glyphicon-refresh"></span></button></th>
+						{% endfor %}
+					</tr>
+					<tr class="c-info">
+						<td colspan="7"></td>
+						{% for row in lsu %}
+						<th colspan="3" class="text-center">
+							<button class="btn btn-sm btn-primary" onClick="showCompra('{{row.rucproveedor}}');" ><span class="glyphicon glyphicon-shopping-cart"></span> Comprar</button>
+						</th>
+						{% endfor %}
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+	</div>
+	<div class="modal in fade modal-backdrop-white" id="mco">
+		<div class="modal-dialog largemo">
+			<div class="modal-content">
+				<div class="modal-header">
+					<a data-dismiss="modal" class="close">&times;</a>
+					<h4 id="toc"></h4>
+					<h4 id="cruc"></h4>
+					<em>Monto de la cotizacion expresado en <span id="tm"></span></em>
+				</div>
+				<div class="modal-body">
+					<div class="row show-grid">
+						<div class="col-md-12">
+							<fieldset class="cocab">
+								<legend>Datos Generales</legend>
+								<div class="row show-grid">
+									<div class="col-md-2">
+										<div class="form-group has-info">
+											<label class="control-label">Nro Cotización</label>
+											<input type="text" id="nroc" class="form-control input-sm" value="{{nro}}" disabled>
+										</div>
+									</div>
+									<div class="col-md-2">
+										<div class="form-group has-info">
+											<label class="control-label">Ruc Proveedor</label>
+											<input type="text" id="rucc" class="form-control input-sm" disabled>
+										</div>
+									</div>
+									<div class="col-md-5">
+										<div class="form-group has-info">
+											<label class="control-label">Lugar de Entrega</label>
+											<input type="text" id="lug" class="form-control input-sm" value="Jr. Gral. José de San Martin Mz. E Lote 6 Huachipa - Lurigancho Lima">
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="form-group has-info">
+											<label class="control-label">Documentos</label>
+											<select name="doc" id="doc" class="form-control input-sm">
+												{% for doc in ldoc %}
+												<option value="{{doc.documentoid}}">{{doc.docnom}}</option>
+												{% endfor %}
+											</select>
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="form-group has-info">
+											<label class="control-label">Forma de Pago</label>
+											<select name="dpag" id="dpag" class="form-control input-sm">
+												{% for pag in lpag %}
+												<option value="{{pag.pagoid}}">{{pag.nompag}}</option>
+												{% endfor %}
+											</select>
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="form-group has-info">
+											<label class="control-label">Moneda</label>
+											<select name="mo" id="mo" onClick="cambioMoney();" class="form-control input-sm">
+												{% for mo in lmo %}
+												<option value="{{mo.monedaid}}">{{mo.nomdes}}</option>
+												{% endfor %}
+											</select>
+										</div>
+									</div>
+									<div class="col-md-2">
+										<div class="form-group has-info">
+											<label class="control-label">Fecha Entrega</label>
+											<input type="text" id="fec" class="form-control">
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group has-info">
+											<label class="control-label">Contacto</label>
+											<input type="text" id="cont" class="form-control">
+										</div>
+									</div>
+								</div>
+							</fieldset>
+						</div>
+						<div class="col-md-12">
+							<div class="table-responsive">
+								<table class="table table-bordered table-c-info table-hover table-condensed">
+									<thead>
+										<tr>
+											<th class="text-center"></th>
+											<th class="text-center">Codigo</th>
+											<th class="text-center">Descripción</th>
+											<th class="text-center">Medida</th>
+											<th class="text-center">Unidad</th>
+											<th class="text-center">Cantidad</th>
+											<th class="text-center">Precio</th>
+											<th class="text-center">Importe</th>
+										</tr>
+									</thead>
+									<tbody id="dcom">
+										
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-warning tblack pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancelar</button>
+					<button class="btn btn-primary"><span class="glyphicon glyphicon-chevron-right"></span> Continuar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal in fade modal-backdrop-white" id="mcompra" static="backdrop">
+		<div class="modal-dialog smallmo">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="text-primary">Orden de Compra</h4>
+					<h4 class="text-center text success" id="nrooc"></h4>
+					<em id="result"></em>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-success tblack"><span class="glyphicon glyphicon-print"></span> Ver</button>
+					<button class="btn btn-primaty tblack"><span class="glyphicon glyphicon-ok"></span> Continuar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

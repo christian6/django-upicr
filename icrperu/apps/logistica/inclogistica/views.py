@@ -2,6 +2,7 @@
 from django.http import HttpResponse
 from django.db import connection, transaction
 #from django.core import serializers
+from django.utils import simplejson
 
 def dictfetchall(cursor): 
     "Returns all rows from a cursor as a dict" 
@@ -395,3 +396,104 @@ def ws_finish_cotiza_proveedor_simple(request):
 		transaction.commit()
 		cn.close()
 		return HttpResponse(data,mimetype='application/html')
+
+def ws_compare_supplier(request):
+	if request.method == 'GET':
+		cn = connection.cursor()
+		cn.execute("SELECT DISTINCT nrocotizacion,rucproveedor FROM logistica.detcotizacion WHERE nrocotizacion LIKE '"+request.GET.get('nro')+"' ORDER BY rucproveedor ASC")
+		lsupplier = dictfetchall(cn)
+		cn.close()
+
+		cn = connection.cursor()
+		cn.execute("SELECT DISTINCT d.materialesid,m.matnom,m.matmed,m.matund,d.cantidad FROM logistica.detcotizacion d INNER JOIN admin.materiales m "+
+					"ON d.materialesid LIKE m.materialesid "+
+					"where d.nrocotizacion like '"+request.GET.get('nro')+"'")
+		ldet = dictfetchall(cn)
+		cn.close()
+		data = ''
+		i = 0
+		for x in ldet:
+			i+=1
+			data += '<tr>'
+			data += '<td><input type="checkbox" name="mat" value="'+x['materialesid']+'"></td>'
+			data += '<td>'+str(i)+'</td>'
+			data += '<td>'+x['materialesid']+'</td>'
+			data += '<td>'+x['matnom']+'</td>'
+			data += '<td>'+x['matmed']+'</td>'
+			data += '<td>'+x['matund']+'</td>'
+			data += '<td id="c'+x['materialesid']+'">'+str(x['cantidad'])+'</td>'
+			for s in lsupplier:
+				cn = connection.cursor()
+				cn.execute("SELECT DISTINCT materialesid,precio,marca FROM logistica.detcotizacion WHERE nrocotizacion LIKE '"+request.GET.get('nro')+"' AND rucproveedor LIKE '"+s['rucproveedor']+"' AND materialesid LIKE '"+x['materialesid']+"' ")
+				det = dictfetchall(cn)
+				cn.close()
+				for p in det:
+					data += '<td class="text-right" id="op'+s['rucproveedor']+str(x['materialesid'])+'">'+str(p['precio'])+'</td>'
+					data += '<td><input type="number"  class="form-control input-xs text-right" value="'+str(p['precio'])+'" id="'+s['rucproveedor']+p['materialesid']+'"></td>'
+					data += '<td>'+p['marca']+'</td>'
+			
+		return HttpResponse(data,mimetype='application/html')
+
+def ws_obtener_money_supplier(request):
+	if request.method == 'GET':
+		data = '{ "status": "Nothing" }'
+		try:
+			cn = connection.cursor()
+			cn.execute("SELECT m.nomdes FROM logistica.cotizacioncli c INNER JOIN admin.moneda m ON c.monedaid LIKE m.monedaid WHERE c.nrocotizacion LIKE '"+request.GET.get('nro')+"' AND c.rucproveedor LIKE '"+request.GET.get('ruc')+"'")
+			mo = cn.fetchone()
+			cn.close()
+			if mo[0] != '':
+				data = '{ "status": "success", "money" : "'+mo[0]+'" }'
+			else:
+				data = '{ "status": "Nothing" }'
+		except Exception, e:
+			data = '{ "status": "Nothing" }'
+
+		data = simplejson.dumps(data)
+		return HttpResponse(data, mimetype='application/json')
+
+def ws_obtener_det_mat_buy(request):
+	if request.method == 'GET':
+		con ='"contacto" : "Nothing"'
+		sts = '"status" : "fail"'
+		try:
+			mats = request.GET.get('mat')
+			cn =  connection.cursor()
+			cn.execute("SELECT materialesid,matnom,matmed,matund FROM admin.materiales WHERE materialesid IN ("+mats+")")
+			lmat = dictfetchall(cn)
+			cn.close()
+			sts = '"status" : "success"'
+		except Exception, e:
+			sts = '"status" : "fail"'
+		try:
+			cn = connection.cursor()
+			cn.execute("SELECT contacto FROM logistica.cotizacioncli WHERE nrocotizacion LIKE '"+request.GET.get('nro')+"' AND rucproveedor LIKE '"+request.GET.get('ruc')+"' ")
+			lcon = cn.fetchone()
+			cn.close()
+			sts = '"status" : "success"'
+			con ='"contacto" : "'+str(lcon[0])+'"'
+		except Exception, e:
+			pass
+		
+		lmat = simplejson.dumps(lmat)
+		data = '{"mat" : '+str(lmat)+', '+sts+', '+con+' }'
+		return HttpResponse(data, mimetype='application/json')
+
+def ws_type_change_money(request):
+	if request.method == 'GET':
+		data = {}
+		sts = ''
+		try:
+			cn = connection.cursor()
+			cn.execute("SELECT tcompra,tventa FROM admin.tipocambio WHERE monedaid LIKE '00002' AND fecha::date = now()::date LIMIT 1 OFFSET 0")
+			lchange = dictfetchall(cn)
+			cn.close()
+			sts = 'success'
+		except Exception, e:
+			lchange = 'Nothing'
+			sts = 'fail'
+			raise e
+		data["status"] = sts
+		data['tc'] = lchange
+		data = simplejson.dumps(data)
+		return HttpResponse(data, mimetype='application/json')

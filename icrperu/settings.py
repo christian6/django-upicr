@@ -136,6 +136,7 @@ INSTALLED_APPS = (
     'icrperu.apps.logistica',
     'icrperu.apps.logistica.inclogistica',
     'icrperu.apps.proveedor',
+    'icrperu.apps.proveedor.incproveedor',
 )
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'

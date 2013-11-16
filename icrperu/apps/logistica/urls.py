@@ -11,4 +11,6 @@ urlpatterns = patterns('icrperu.apps.logistica.views',
 	url(r'^cotizacion/suministro/$','view_cotiza_suministro',name='vw_cotiza_suministro'),
 	## Cotizacion
 	url(r'^cotizacion/materiales/simple/$','view_cotizacion_simple',name='vw_cotizacion_simple'),
+	url(r'^list/cotizacion/$','view_list_cotizacion',name='vw_list_cotizacion'),
+	url(r'^compare/supplier/(?P<nro>.*)/$','view_compare_supplier',name='vw_compare_supplier'),
 )

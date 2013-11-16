@@ -24,7 +24,7 @@
 	{% endblock %}
 	<!-- Part Style-Basic -->
 	{% block styleint %}
-	<link rel="stylesheet" href="/media/css/style-int.css">
+	<link rel="stylesheet" href="/media/css/style-proveedor/style-int-supplier.css">
 	{% endblock %}
 	<!-- Part Styles -->
 	{% block style %}{% endblock %}
@@ -34,7 +34,7 @@
 <body>
 	<header>
 		{% block header %}
-			{% include 'logistica/includes/logistica-menu.html' %}
+			{% include 'proveedor/includes/proveedor-menu.inc' %}
 		{% endblock %}
 	</header>
 	<section>
@@ -42,8 +42,8 @@
 	{% endblock %}	
 	</section>
 	<div id="space"></div>
-	<footer>
-		{% block footer %}{% endblock %}
-	</footer>
+	{% block footer %}
+		<footer></footer>
+	{% endblock %}
 </body>
 </html>

@@ -1,0 +1,195 @@
+{% extends 'basepro.html'%}
+{% block title %}Cotización {{nro}}{% endblock %}
+{% block style %}
+<style>
+	#f1{
+		border: 0;
+	}
+	.pre{
+		text-align: right;
+		width: 6em;
+	}
+	#timp{
+		width: 7em;
+	}
+	table tbody tr td{
+		font-size: 13.5px;
+		font-family: Arial, helvetica, sans-serif;
+	}
+	#f2{
+		border-radius: .5em;
+		border: 2px dashed #2D2D2D;
+		text-align: left;
+	}
+	#f2 legend{
+		padding: 0 .5em 0 .5em;
+	}
+</style>
+{% endblock %}
+{% block script %}
+<script src="/media/js/proveedor/cotizacion.js"></script>
+{% endblock %}
+{% block content %}
+<div class="container well c-success">
+	<h3 class="text-success">Cotizaciones {{nro}} <span class="glyphicon glyphicon-cloud-download"></span></h3>
+	<input type="hidden" id="nro" value="{{nro}}">
+	<fieldset id="f1" class="c-info text-primary">
+		<legent>
+			<h4>Datos Generales</h4>
+		</legent>
+			<div class="alert alert-block alert-success tblack">
+				<div class="row show-grid">
+					<div class="col-md-3">
+						<b>Nro Cotización : </b> {{nro}}
+					</div>
+					<div class="col-md-3 col-md-offset-9"></div>
+					<div class="col-md-3">
+						<strong>Ruc Proveedor : </strong>
+						{{ det.0.rucproveedor }}
+					</div>
+					<div class="col-md-5">
+						<strong>Razón Social : </strong>
+						{{ det.0.razonsocial }}
+					</div>
+					<div class="col-md-8 col-md-offset-4"></div>
+					<div class="col-md-4">
+						<strong>Dirección : </strong>
+						{{ det.0.direccion }}
+					</div>
+					<div class="col-md-2">
+						<strong>Distrito : </strong>
+						{{det.0.distnom}}
+					</div>
+					<div class="col-md-2">
+						<strong>Provincia : </strong>
+						{{det.0.provnom}}
+					</div>
+					<div class="col-md-2">
+						<strong>Departamento : </strong>
+						{{det.0.deparnom}}
+					</div>
+					<div class="col-md-2">
+						<strong>Pais : </strong>
+						{{det.0.paisnom}}
+					</div>
+				</div>
+			</div>
+	</fieldset>
+	<input type="hidden" name="csrfmiddlewaretoken" value={{csrf_token}}>
+	<fieldset id="f2" class="c-info">
+		<legend>
+			<h4 class="text-primary">Si has terminado de ingresar los precios presiona aquí
+				<button class="btn btn-warning tblack btn-xs" onClick="showCab();">
+					<span id="btncab" class="glyphicon glyphicon-chevron-down"></span>
+				</button>
+			</h4>
+		</legend>
+		<div id="cab" class="alert alert-block alert-warning">
+			<a data-dissmis="alert" class="close">&times;</a>
+			<strong>Datos Adicionales</strong>
+			<p><small>Campos requeridos *</small></p>
+			<div class="row show-grid">
+				<div class="col-md-3">
+					<strong>Contacto * </strong><small>(Ingresa tu nombre.)</small>
+					<input type="text" id="con" class="form-control input-sm">
+				</div>
+				<div class="col-md-2">
+					<strong>Fecha Entrega *</strong><small>Aprox.</small>
+					<input type="text" id="fent" class="form-control input-sm">
+				</div>
+				<div class="col-md-2">
+					<strong>Tiempo de Validez *</strong>
+					<input type="text" id="fval" class="form-control input-sm">
+				</div>
+				<div class="col-md-3">
+					<strong>Moneda *</strong>
+					<select name="mo" id="mo" class="form-control">
+						{% for row in lmo %}
+						<option value="{{row.monedaid}}">{{row.nomdes}}</option>
+						{% endfor %}
+					</select>
+				</div>
+				<div class="col-md-3">
+					<strong>Adjuntar Archivo</strong> <small>(Opcional)</small>
+					<input type="file" class="hide" id="fop">
+					<p id="upf" class="text-center alert alert-block alert-success">
+						<a href="javascript:showadj();"><span class="glyphicon glyphicon-cloud-upload"></span></a>
+					</p>
+				</div>
+				<div class="col-md-4">
+					<strong>Observación</strong>
+					<textarea name="obs" id="obs" rows="4" class="form-control"></textarea>
+				</div>
+				<div class="col-md-2">
+					<br>
+					<br>
+					<button id="btns" onClick="savecotcliente();" class="btn btn-warning btn-lg tblack">
+						<span class="glyphicon glyphicon-floppy-open"></span>
+						Enviar Cotización
+					</button>
+				</div>
+			</div>
+		</div>
+	</fieldset>
+	<div class="table-responsive">
+		<table class="table table-hover table-bordered table-condensed table-c-info">
+			<caption>
+				
+			</caption>
+			<thead>
+				<tr>
+					<th id="tc"></th>
+					<th id="tc">Descripcion</th>
+					<th id="tc">Medida</th>
+					<th id="tc">Unidad</th>
+					<th id="tc">Cantidad</th>
+					<th id="tc">Precio</th>
+					<th id="tc">Importe</th>
+					<th id="tc">Entrega</th>
+					<th id="tc">Marca</th>
+					<th id="tc">Tecnica</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for row in ldet %}
+					<tr class="c-white">
+						<td id="tc">{{forloop.counter}}</td>
+						<td>{{row.matnom}}</td>
+						<td>{{row.matmed}}</td>
+						<td id="tc">{{row.matund}}</td>
+						<td id="c{{row.materialesid}}" class="text-center">{{row.cantidad}}</td>
+						<td>
+							<input type="number" class="form-control input-xs pre" min="0" max="99999" step="0.01" onChange="calmodp(this);" onBlur="updatePrice(this);" id="pre{{row.materialesid}}" value='{{row.precio|floatformat:""}}' />
+						</td>
+						<td id="timp">
+							<div class="input-group input-group-xs">
+								<span class="input-group-addon">$</span>
+								<input type="text" class="form-control input-xs text-right" name="import" id="imp{{row.materialesid}}" value="" DISABLED />	
+							</div>
+						</td>
+						<td>
+							<input type="text" class="form-control input-xs" id="f{{row.materialesid}}" value="{{row.fecent}}" onChange="updateFecha(this);" name="fecha" placeholder="aaaa-mm-dd" />
+						</td>
+						<td>
+							<input type="text" class="form-control input-xs" id="m{{row.materialesid}}" value="{{row.marca}}" onBlur="updateMarca(this);" placeholder="Ingrese Marca" />
+						</td>
+						<td id="tc">
+							<input type="file" class="form-control input-xs hide" onChange="filetecnicoup(this);" id="h{{row.materialesid}}" accept="application/pdf"/>
+							<a href="javascript:showhojatec('h{{row.materialesid}}');">
+								<span class="glyphicon glyphicon-cloud-upload text-primary"></span>	
+							</a>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+			<tfoot>
+				<tr>
+					<th colspan="6" class="c-blue"><p class="text-right">Total</p></th>
+					<th class="c-info text-right" id="tot">$</th>
+				</tr>
+			</tfoot>
+		</table>	
+	</div>
+</div>
+{% endblock %}
+{% block footer %}{% endblock %}

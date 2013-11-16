@@ -136,7 +136,7 @@ figure {
   margin: 0;
 }
 
-fieldset {
+/*fieldset {
   padding: 0.35em 0.625em 0.75em;
   margin: 0 2px;
   border: 1px solid #c0c0c0;
@@ -145,7 +145,7 @@ fieldset {
 legend {
   padding: 0;
   border: 0;
-}
+}*/
 
 button,
 input,
@@ -1573,6 +1573,14 @@ table th[class*="col-"] {
   border-color: #f8e5be;
 }
 
+.table-responsive {
+  width: 100%;
+  margin-bottom: 15px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  border: 1px solid #dddddd;
+}
+
 @media (max-width: 768px) {
   .table-responsive {
     width: 100%;
@@ -1622,7 +1630,7 @@ table th[class*="col-"] {
   }
 }
 
-fieldset {
+/*fieldset {
   padding: 0;
   margin: 0;
   border: 0;
@@ -1638,7 +1646,7 @@ legend {
   color: #333333;
   border: 0;
   border-bottom: 1px solid #e5e5e5;
-}
+}*/
 
 label {
   display: inline-block;
@@ -1814,6 +1822,14 @@ fieldset[disabled] .checkbox-inline {
   line-height: 1.5;
   border-radius: 3px;
 }
+.input-xs {
+  height: 20px;
+  padding: 2px 5px;
+  font-size: 11px;
+  line-height: 1.5;
+  border-radius: 3px;
+}
+
 
 select.input-sm {
   height: 30px;
@@ -3703,6 +3719,16 @@ textarea.input-group-lg > .input-group-btn > .btn {
   height: 30px;
   padding: 5px 10px;
   font-size: 12px;
+  line-height: 1.5;
+  border-radius: 3px;
+}
+
+.input-group-xs > .form-control,
+.input-group-xs > .input-group-addon,
+.input-group-xs > .input-group-btn > .btn {
+  height: 22px;
+  padding: 2px 5px;
+  font-size: 11px;
   line-height: 1.5;
   border-radius: 3px;
 }
@@ -5657,6 +5683,9 @@ body.modal-open,
 .largemo{
   width: 80%;
 }
+.smallmo{
+  width: 20%;
+}
 .tblack{
   color: #2D2D2D;
 }
@@ -6987,7 +7016,10 @@ td.visible-print {
   background-color: #DA4543;
   border-color: #eed3d7;
 }
-
+.c-white{
+  background-color: #FFFFFF;
+  border-color: #FFFFF0;
+}
 
 
 

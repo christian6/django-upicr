@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Lista Cotizacion{% endblock %}
+{% block script %}
+	
+{% endblock %}
+{% block content %}
+<div class="container well">
+	<h3 class="text-danger"><span class="glyphicon glyphicon-list"></span> Lista de Cotizacion Enviadas por Proveedor</h3>
+	<div class="table-responsive">
+		<table class="table table-c-danger table-bordered table-condensed table-hover">
+			<thead>
+				<tr>
+					<th class="text-center"></th>
+					<th class="text-center">Nro Cotizacion</th>
+					<th class="text-center">Registrada</th>
+					<th class="text-center">Requerido</th>
+					<th class="text-center">Proveedores</th>
+					<th class="text-center">Ver</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for row in lcot %}
+					<tr>
+					<td class="text-center">{{forloop.counter}}</td>
+					<td>{{row.nrocotizacion}}</td>
+					<td class="text-center">{{row.fecha|date:"SHORT_DATE_FORMAT"}}</td>
+					<td class="text-center">{{row.fecreq|date:"SHORT_DATE_FORMAT"}}</td>
+					<td>{{row.razonsocial}}</td>
+					<td class="text-center"><a href="{% url 'vw_compare_supplier' row.nrocotizacion %}"><span class="glyphicon glyphicon-export"></span></a></td>
+				{% endfor %}
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="6" class="text-center">
+						<ul class="pagination">
+							{% if lcot.has_previous %}
+								<li><a href="?page={{ lcot.previous_page_number }}">&laquo;</a></li>
+							{% endif %}
+							{% for i in lcot.paginator.page_range %}
+								<li {% if i == lcot.number %}class="active"{% endif %} > <a href="?page={{i}}">{{i}}</a> </li>
+							{% endfor %}
+							{% if lcot.has_next %}
+								<li><a href="?page={{ lcot.next_page_number }}">&raquo;</a></li>
+							{% endif %}
+						</ul>
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+</div>
+{% endblock %}
