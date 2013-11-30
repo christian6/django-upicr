@@ -103,3 +103,16 @@ def view_cotizacion_supplier(request,nro):
 		cn.close()
 		ctx = { 'nro' : nro, 'det' : det, 'ldet' : ldet, 'lmo' : lmo }
 		return render_to_response('proveedor/view_cotizacion.html',ctx,context_instance=RequestContext(request))
+
+def view_list_Order_buy(request):
+	if str(request.session.get('accesssupplier')) != 'success':
+		return HttpResponseRedirect('/proveedor/')
+	elif request.method == 'GET':
+		cn = connection.cursor()
+		cn.execute("SELECT c.nrocompra,m.nomdes,e.empnom||', '||e.empape as nombre,c.fecha,c.fecent,s.esnom FROM logistica.compras c INNER JOIN admin.empleados e "+
+							"ON c.empdni = e.empdni INNER JOIN admin.moneda m ON c.monedaid=m.monedaid INNER JOIN admin.estadoes s ON c.esid = s.esid "+
+							"WHERE c.rucproveedor LIKE '"+request.session.get('rucpro')+"' AND c.esid LIKE '12'")
+		lbuy = dictfetchall(cn)
+		cn.close()
+		ctx = { 'lbuy' : lbuy }
+		return render_to_response('proveedor/list_buy.html',ctx,context_instance=RequestContext(request))

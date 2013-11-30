@@ -32,7 +32,20 @@
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Cotizaciones <b class="caret"></b></a>
         <ul class="dropdown-menu">
           <li><a href="{% url 'vw_cotizacion_simple' %}">Cotización Materiales</a></li>
-          <li><a href="{% url 'vw_list_cotizacion' %}">Lista Cotización</a></li>
+          <li><a href="{% url 'vw_list_cotizacion' %}">Comparar Cotización</a></li>
+          <li><a href="{% url 'vw_list_key_cotizacion' %}">Lista de Cotizacion Keys</a></li>
+          <li><a href="{% url 'vw_order_buy_single' %}">Orden de Compra</a></li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a href="#" data-toggle="dropdown" class="dropdown-toggle"> Generales <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li class="dropdown-header" role="presentation"><strong>PROVEEDORES</strong></li>
+          <li><a href="{% url 'vw_supplier' %}">Proveedores</a></li>
+          <li><a href="{% url 'vw_supplier_login_upkeep' %}">Login Proveedor</a></li>
+          <li class="dropdown-header" role="presentation"><strong>REPORTES</strong></li>
+          <li><a href="{% url 'vw_list_request_quot' %}">Cotizaciones</a></li>
+          <li><a href="{% url 'vw_list_orders_buy' %}">Orden de Compras</a></li>
         </ul>
       </li>
     </ul>

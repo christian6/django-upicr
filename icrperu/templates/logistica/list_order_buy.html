@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Lista Orden de Compra{% endblock %}
+{% block script %}
+<script src="/media/js/logistica/listbuy.js"></script>
+{% endblock %}
+{% block content %}
+<div class="container well">
+	<h3 class="text-danger"> Ordenes de Compras</h3>
+	<div class="bs-callout bs-callout-danger">
+		<div class="row show-grid">
+			<div class="col-md-11">
+				<div class="col-md-4">
+					<div class="alert alert-danger alert-block">
+						<label class="radio-inline"><input type="radio" onChange="changeRadio();" value="n" name="rbtn"> Nro Orden de Compra</label>
+						<label class="radio-inline"><input type="radio" onChange="changeRadio();" value="f" name="rbtn"> Fechas</label>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-2">
+				<div class="form-group has-error">
+					<label class="control-label">Orden Compra</label>
+					<input type="text" id="nro" maxlength="10" class="form-control" placeholder="OCaa00000" DISABLED >
+				</div>
+			</div>
+			<div class="col-md-2">
+				<div class="form-group has-error">
+					<label class="control-label">Fecha Inicio</label>
+					<input type="text" class="form-control" maxlength="10" placeholder="aaaa-mm-dd" id="fi" DISABLED>
+				</div>
+			</div>
+			<div class="col-md-2">
+				<div class="form-group has-error">
+					<label class="control-label">Fecha Fin</label>
+					<input type="text" class="form-control" maxlength="10" placeholder="aaaa-mm-dd" id="ff" DISABLED>
+				</div>
+			</div>
+			<div class="col-md-2">
+				<div class="form-group has-error">
+					<label class="control-label">&nbsp;</label>
+					<button class="btn btn-danger" onClick="searchOrderBuy();"><span class="glyphicon glyphicon-search"></span> Buscar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="table-responsive">
+		<table class="table table-c-danger table-bordered table-condensed table-hover">
+			<thead>
+				<tr>
+					<th class="text-center"></th>
+					<th class="text-center">Nro Compra</th>
+					<th class="text-center">Proveedor</th>
+					<th class="text-center">Documento de Pago</th>
+					<th class="text-center">Moneda</th>
+					<th class="text-center">Ver</th>
+				</tr>
+			</thead>
+			<tbody id="tbo">
+				{% for row in lbuy %}
+					<tr>
+						<td class="text-center">{{forloop.counter}}</td>
+						<td>{{row.nrocompra}}</td>
+						<td>{{row.razonsocial}}</td>
+						<td>{{row.docnom}}</td>
+						<td>{{row.nomdes}}</td>
+						<td class="text-center">
+							<a class="tblack" href="http://190.41.246.91/web-cotiza/reports/pdfs/system/intordencomprapdf.php?ruc={{row.rucproveedor}}&nro={{row.nrocompra}}" target="_blank">
+							<span class="glyphicon glyphicon-export"></span>
+						</a>
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+{% endblock %}

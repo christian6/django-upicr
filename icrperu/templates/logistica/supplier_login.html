@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% block title %}Mantenimiento Proveedor{% endblock %}
+{% block script %}
+<script src="/media/js/md5-min.js"></script>
+<script src="/media/js/logistica/loginProveedor.js"></script>
+{% endblock %}
+{% block content %}
+<div class="container well">
+	<h3 class="text-info"><span class="glyphicon glyphicon-lock"></span> Mantenimiento Login Proveedor</h3>
+	<small>En esta sección se puede generar y actualizar login de Proveedor.</small>
+	<ul class="nav nav-tabs nav-pills nav-justified" id="tablo">
+		<li><a href="#list" data-toggle="tab">Lista de Proveedores</a></li>
+		<li><a href="#login" data-toggle="tab"> Registrar Proveedor</a></li>
+	</ul>
+	<div class="well">
+		<div class="tab-content">
+			<div class="tab-pane fade" id="list">
+				<div class="table-responsive">
+					<table class="table table-condensed table-hover table-striped table-c-info">
+						<thead>
+							<tr>
+								<th class="text-center"></th>
+								<th class="text-center">Ruc</th>
+								<th class="text-center">Razón Social</th>
+								<th class="text-center">Dirección</th>
+								<th class="text-center">Tipo</th>
+								<th class="text-center">Login</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for row in lpro %}
+								<tr>
+									<td>{{forloop.counter}}</td>
+									<td>{{row.rucproveedor}}</td>
+									<td>{{row.razonsocial}}</td>
+									<td>{{row.direccion}}</td>
+									<td>{{row.tipo}}</td>
+									<td class="text-center">
+										<button class="btn btn-xs btn-warning tblack" onClick="generarPasswd('{{row.rucproveedor}}','{{row.razonsocial}}','{{row.email}}');">
+											<span class="glyphicon glyphicon-log-in"></span>
+										</button>
+									</td>
+								</tr>
+							{% endfor%}
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="6" class="text-center">
+									<ul class="pagination">
+										{% if lpro.has_previous %}
+											<li><a href="?page={{ lpro.previous_page_number }}">&laquo;</a></li>
+										{% endif %}
+										{% for i in lpro.paginator.page_range %}
+											<li {% if i == lpro.number %}class="active"{% endif %} > <a href="?page={{i}}">{{i}}</a> </li>
+										{% endfor %}
+										{% if lpro.has_next %}
+											<li><a href="?page={{ lpro.next_page_number }}">&raquo;</a></li>
+										{% endif %}
+									</ul>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="login">
+				<div class="form-horizontal" role="form">
+					<div class="form-group">
+						<label for="ruc" class="col-md-2 control-label">Ruc Proveedor</label>
+						<div class="col-md-2">
+							<p  class="form-control-static" id="ruc"></p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="rs" class="col-md-2 control-label">Razón Social</label>
+						<div class="col-md-5">
+							<p class="form-control-static" id="rs"></p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="usrn" class="col-md-2 control-label">User Name</label>
+						<div class="col-md-2">
+							<input type="text" class="form-control" id="usrn" maxlength="11" disabled>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="passwd" class="col-md-2 control-label">Password</label>
+						<div class="col-md-2">
+							<input type="password" class="form-control" id="passwd" maxlength="11">
+						</div>
+						<span class="inline help-block">el password es el número de RUC.</span>
+					</div>
+					<div class="form-group">
+						<label for="&nbsp;" class="control-label col-md-2"></label>
+						<div class="col-md-3">
+							<button class="btn btn-sm btn-primary" onClick="saved();"><span class="glyphicon glyphicon-saved"></span><span class="glyphicon glyphicon-envelope"></span> Guardar Cambios y enviar </button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade in" id="mmail" data-backdrop="static">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<a data-dismiss="modal" class="close">&times;</a>
+				<h4 class="text-primary">Enviar Cambio de Clave a Proveedor</h4>
+			</div>
+			<div class="modal-header">
+				<div class="form-horizontal">
+					<div class="form-group">
+						<label for="para" class="control-label col-md-2">Para:</label>
+						<div class="col-md-10">
+							<input type="email" class="form-control" id="para">	
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="para" class="control-label col-md-2">Asunto:</label>
+						<div class="col-md-10">
+							<input type="text" class="form-control" id="asunto" disabled>	
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="para" class="control-label col-md-2"></label>
+						<div class="col-md-10">
+							<textarea name="texto" id="texto" class="form-control" rows="4" ></textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-md-2">
+							<button class="btn btn-primary" onClick="send();"><span class="glyphicon glyphicon-envelope"></span> Enviar</button>
+						</div>
+						<div class="col-md-3">
+							<button class="btn btn-warning tblack" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancelar</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

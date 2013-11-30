@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
-{% block title %}Cotización de Materiales{% endblock %}
+{% block title %}Orden de Compra{% endblock %}
 {% block script %}
 <script src="/media/js/autoComplete.js"></script>
-<script src="/media/js/logistica/cotizasimple.js"></script>
+<script src="/media/js/logistica/ordenbuysimple.js"></script>
 {% endblock %}
 {% block style %}
 <style>
@@ -24,7 +24,7 @@
 {% block content %}
 <div class="container">
 	<div class="well">
-		<h3 class="text-primary">Cotizar Materiales</h3>
+		<h3 class="text-primary">Orden de Compra - Materiales</h3>
 		<input type="hidden" id="dni" value="{{request.session.dniicr}}">
 		<div class="row show-grid">
 			<div class="col-md-12">
@@ -32,14 +32,26 @@
 					<div class="row show-grid">
 						<div class="col-md-12">
 							<div class="btn-group">
-								<button type="button" class="btn btn-warning tblack" onClick="btnsearch();"><span class="glyphicon glyphicon-search"></span><span class="visible-md visible-lg visible-sm">Buscar</span></button>
-								<button type="button" class="btn btn-warning tblack" onClick="showreadxls();">
+								<button type="button" class="btn btn-warning tblack" onClick="btnsearch();">
+									<span class="glyphicon glyphicon-search"></span>
+									<span class="visible-md visible-lg visible-sm">Buscar</span>
+								</button>
+								<button type="button" class="btn btn-warning tblack" onClick="showfileupload();">
 									<span class="glyphicon glyphicon-file"></span>
 									<span class="visible-md visible-lg visible-sm">Leer Archivo</span>
 								</button>
-								<button type="button" class="btn btn-warning tblack" onClick="list_tmp_cotiza();"><span class="glyphicon glyphicon-list"></span><span class="visible-md visible-lg visible-sm">Listar Detalle</span></button>
-								<button type="button" class="btn btn-warning tblack" onClick="deletetmp();"><span class="glyphicon glyphicon-remove"></span><span class="visible-md visible-lg visible-sm">Eliminar Tmp</span></button>
-								<button type="button" class="btn btn-warning tblack" onClick="showCotiza();"><span class="glyphicon glyphicon-floppy-disk"></span>  <span class="visible-md visible-lg visible-sm">Guardar Cambios</span></button>
+								<button type="button" class="btn btn-warning tblack" onClick="list_tmp_compra();">
+									<span class="glyphicon glyphicon-list"></span>
+									<span class="visible-md visible-lg visible-sm">Listar Detalle</span>
+								</button>
+								<button type="button" class="btn btn-warning tblack" onClick="deletetmp();">
+									<span class="glyphicon glyphicon-remove"></span>
+									<span class="visible-md visible-lg visible-sm">Eliminar Tmp</span>
+								</button>
+								<button type="button" class="btn btn-warning tblack" onClick="showCotiza();">
+									<span class="glyphicon glyphicon-floppy-disk"></span> 
+									<span class="visible-md visible-lg visible-sm">Guardar Cambios</span>
+								</button>
 							</div>
 						</div>
 					</div>
@@ -74,10 +86,16 @@
 				<div class="col-md-6">
 					<div class="well c-danger">
 						<div class="row show-grid">
-							<div class="col-md-5">
+							<div class="col-md-3">
 								<div class="form-group has-error">
-									<label for="cant" class="control-label">Ingrese Cantidad</label>
+									<label for="cant" class="control-label">Cantidad</label>
 									<input type="number" class="form-control" min="1" max="9999" id="cant">
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="form-group has-error">
+									<label for="pre" class="control-label">Precio</label>
+									<input type="number" class="form-control" min="1" max="9999" id="pre">
 								</div>
 							</div>
 							<div class="col-md-6">
@@ -101,6 +119,7 @@
 								<th>Medida</th>
 								<th class="text-center">Unidad</th>
 								<th class='text-center'>Cantidad</th>
+								<th class='text-center'>Precio</th>
 								<th class='text-center'>Editar</th>
 								<th class='text-center'>Eliminar</th>
 							</tr>
@@ -114,22 +133,22 @@
 		</div>
 	</div>
 </div>
-<div class="modal fade in" id="mcot">
-	<div class="modal-dialog">
-		<div class="modal-content c-warning">
+<div class="modal fade in" id="mbuy">
+	<div class="modal-dialog largemo">
+		<div class="modal-content c-success">
 			<div class="modal-header">
 				<a data-dismiss="modal" class="close">&times;</a>
-				<h3 class="text-warning">Generar Cotización</h3>
+				<h3 class="text-warning">Generar Orden de Compra</h3>
 			</div>
 			<div class="modal-body">
 				<div class="row show-grid">
-					<div class="col-md-4">
+					<div class="col-md-2">
 						<div class="form-group has-info">
 							<label for="cdni" class="control-label">DNI</label>
 							<input type="text" class="form-control input-sm" value="{{request.session.dniicr}}" disabled>
 						</div>
 					</div>
-					<div class="col-md-8">
+					<div class="col-md-3">
 						<div class="form-group has-info">
 							<label for="cdni" class="control-label">Nombres</label>
 							<input type="text" class="form-control input-sm" value="{{request.session.nomicr}}" disabled>
@@ -137,79 +156,69 @@
 					</div>
 					<div class="col-md-4">
 						<div class="form-group has-info">
-							<label class="control-label">Fecha Requerida</label>
-							<input type="text" class="form-control" id="fec">
-						</div>
-					</div>
-					<div class="col-md-11">
-						<div class="form-group has-info">
-							<label for="obs" class="control-label">Observación</label>
-							<textarea name="obs" id="obs" class="form-control"></textarea>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button class="btn btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancelar</button>
-				<button class="btn btn-primary" onClick="save_cotiza();"><span class="glyphicon glyphicon-chevron-right"></span> Continuar</button>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="modal fade in" id="mdet">
-	<div class="modal-dialog largemo">
-		<div class="modal-content c-success">
-			<div class="modal-header">
-				<a data-dismiss="modal" class="close">&times;</a>
-				<h3 class="text-primary">Cotizar a Proveedor <span id="ncot"></span></h3>
-			</div>
-			<div class="modal-body">
-				<div class="row show-grid">
-					<div class="col-md-6">
-						<div class="form-group has-info">
-							<label for="pro" class="control-label">Proveedor</label>
-							<select name="pro" id="pro" class="form-control">
+							<label class="control-label">Proveedor</label>
+							<select name="pro" id="pro" class="form-control input-sm">
 								{% for row in lpro %}
-								<option value="{{row.rucproveedor}}">{{row.razonsocial}}</option>
+									<option value="{{row.rucproveedor}}">{{row.razonsocial}}</option>
 								{% endfor %}
 							</select>
 						</div>
 					</div>
-				</div>
-				<div class="row show-grid">
-					<div class="col-md-12">
-						<div class="table-responsive">
-							<table class="table table-condensed table-hover table-c-warning">
-								<caption>
-									<div class="alert alert-info col-md-3 alert-block">
-										<label class="radio-inline pull-left" onChange="selectedchk();">
-											<input type="radio" name="rmat" value="f"> Todo
-										</label>
-										<label class="radio-inline pull-left" onChange="selectedchk();">
-											<input type="radio" name="rmat" value="c"> Ninguno
-										</label>
-									</div>
-								</caption>
-								<thead>
-									<tr>
-										<th></th>
-										<th>Codigo</th>
-										<th>Descripción</th>
-										<th>Medida</th>
-										<th>Unidad</th>
-										<th>Cantidad</th>
-										<th>Chk</th>
-									</tr>
-								</thead>
-								<tbody id="tbld"></tbody>
-							</table>
+					<div class="col-md-3">
+						<div class="form-group has-info">
+							<label class="control-label">Documento de Pago</label>
+							<select name="doc" id="doc" class="form-control input-sm">
+								{% for row in doc %}
+									<option value="{{row.documentoid}}">{{row.docnom}}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="form-group has-info">
+							<label class="control-label">Forma de Pago</label>
+							<select name="pag" id="pag" class="form-control input-sm">
+								{% for row in pag %}
+									<option value="{{row.pagoid}}">{{row.nompag}}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group has-info">
+							<label for="cdni" class="control-label">Lugar de Entrega</label>
+							<input type="text" id="lug" class="form-control input-sm" value="Jr. Gral. Jose de San Martin Mz. E Lote 6 Huachipa Lurigancho Lima 15, Peru" >
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="form-group has-info">
+							<label class="control-label">Moneda</label>
+							<select name="mo" id="mo" class="form-control input-sm">
+								{% for row in mo %}
+									<option value="{{row.monedaid}}">{{row.nomdes}}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+					<div class="col-md-2">
+						<div class="form-group has-info">
+							<label for="cdni" class="control-label">Fecha</label>
+							<input type="text" id="fec" class="form-control input-sm" value="" >
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group has-info">
+							<label for="cont" class="control-label">Contacto</label>
+							<input name="cont" id="cont" class="form-control input-sm" />
 						</div>
 					</div>
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button class="btn btn-warning pull-left tblack" onClick="generar_cotizacion_proveedor();"><span class="glyphicon glyphicon-floppy-disk"></span> Cotizar Proveedor</button>
-				<button class="btn btn-primary" onClick="finish_cotiza();"><span class="glyphicon glyphicon-ok"></span> Terminar</button>
+				<button class="btn btn-warning pull-left tblack" data-dismiss="modal">
+					<span class="glyphicon glyphicon-remove"></span> Cancelar</button>
+				<button class="btn btn-primary" onClick="savedOrderbuy();">
+					<span class="glyphicon glyphicon-saved"></span> Generar Orden de Compra</button>
 			</div>
 		</div>
 	</div>
@@ -238,8 +247,8 @@
 			</div>
 			<div class="modal-footer">
 				<button class="btn btn-warning pull-left tblack" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancelar</button>
-				<a href="/media/resource/templates/cotizacion-single.xls" target="_blank" class="btn btn-warning pull-left tblack"><span class="glyphicon glyphicon-download"></span> Plantilla</a>
-				<button class="btn btn-primary" onClick="uploadCotizacion();"><span class="glyphicon glyphicon-upload"></span> Cargar y leer</button>
+				<a href="/media/resource/templates/compra-single.xls" target="_blank" class="btn btn-warning pull-left tblack"><span class="glyphicon glyphicon-download"></span> Plantilla</a>
+				<button class="btn btn-primary" onClick="uploadFileBuy();"><span class="glyphicon glyphicon-upload"></span> Cargar y leer</button>
 			</div>
 		</div>
 	</div>

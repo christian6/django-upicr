@@ -360,3 +360,55 @@ function finish_cotiza () {
 		}
 	});
 }
+function showreadxls () {
+	$("#mreadxls").modal('show');
+}
+function showopenupfile () {
+	$("#upfile").click();
+}
+function uploadCotizacion () {
+	var inputfile = document.getElementById("upfile");
+	var file = inputfile.files[0];
+	if (file != null) {
+		var prm = new FormData();
+		var token = $("input[name=csrfmiddlewaretoken]").val();
+		prm.append('archivo',file);
+		prm.append('csrfmiddlewaretoken', token);
+		$.ajax({
+			url : '/ws/logistica/upload/template/cotizacion/simple/',
+			type : 'POST',
+			data : prm,
+			contentType : false,
+			processData : false,
+			cache : false,
+			beforeSend : function (obj) {
+				$("#progressfile").removeClass('hide');
+			},
+			success : function (response) {
+				//console.log(response);
+				if (response.status == 'success') {
+					$(".progress").removeClass('progress-striped');
+					$(".progress-bar").removeClass('progress-bar-warning').addClass('progress-bar-success');
+					$('#proinfo').html('Se ha terminado correctamente.');
+					list_tmp_cotiza();
+					setTimeout(function() { 
+						$("#mreadxls").modal('hide');
+						$("#proinfo").html('Espere por favor, estamos trabajando.');
+						$(".progress").addClass('progress-striped');
+						$(".progress-bar").removeClass('progress-bar-success').addClass('progress-bar-warning');
+						$("#progressfile").addClass('hide');
+						}, 600);
+				}else if (response.status == 'fail') {
+					msgError('Error','Archivo sin formato.',true);
+				}
+			},
+			error : function (obj,que,otr) {
+				msgError(null,null,null);
+			}
+		});
+	}else{
+		$('#mreadxls').modal('hide');
+		msgWarning(null,'No se a cargado ningún archivo, carge uno para continuar.',null);
+		setTimeout(function() { $("#mreadxls").modal('show'); }, 2600);
+	}
+}

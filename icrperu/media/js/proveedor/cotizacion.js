@@ -187,7 +187,7 @@ function tooldocument () {
 		trigger : 'hover'
 	});
 	$("#upf").tooltip({
-		title : 'Aquí puedes enviarnos algún documento adicional',
+		title : 'Aquí puedes enviarnos algún documento adicional, no es necesario.',
 		placement : 'top',
 		trigger : 'hover'
 	});
@@ -235,8 +235,9 @@ function savecotcliente () {
 			success : function (response) {
 				if (response.status == 'success') {
 					msgInfo(null,null,null);
+					setTimeout(function() {location.href='/proveedor/list/cotizaciones/';}, 1600);
 				}else{
-					msgWarning(null,'Al parecer ya esta registrado en Sistema.',null);
+					msgWarning('Alerta!','Su cotización ya esta registrada en el sistema, espere nuestra respuesta, Gracias.',null);
 				}
 			},
 			error : function (obj,que,otr) {

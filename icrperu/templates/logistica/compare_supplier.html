@@ -36,7 +36,7 @@
 						<td colspan="7"></td>
 						{% for row in lsu %}
 						<th colspan="3" class="text-center">
-							<button class="btn btn-sm btn-warning"><span class="glyphicon glyphicon-shopping-cart"></span> Comprar</button>
+							<button class="btn btn-sm btn-warning" onClick="showCompra('{{row.rucproveedor}}');"><span class="glyphicon glyphicon-shopping-cart"></span> Comprar</button>
 						</th>
 						{% endfor %}
 					</tr>
@@ -190,22 +190,26 @@
 				</div>
 				<div class="modal-footer">
 					<button class="btn btn-warning tblack pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancelar</button>
-					<button class="btn btn-primary"><span class="glyphicon glyphicon-chevron-right"></span> Continuar</button>
+					<button class="btn btn-primary" onClick="saveOrderBuy();"><span class="glyphicon glyphicon-shopping-cart"></span> Comprar</button>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="modal in fade modal-backdrop-white" id="mcompra" static="backdrop">
-		<div class="modal-dialog smallmo">
+	<div class="modal in fade modal-backdrop-success" id="mcompra" data-backdrop="static">
+		<div class="modal-dialog" style="width: 21em;">
 			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="text-primary">Orden de Compra</h4>
+				<div class="modal-body">
+					<h4 class="text-primary">Orden de Compra Nro</h4>
 					<h4 class="text-center text success" id="nrooc"></h4>
-					<em id="result"></em>
+					<small id="rucoc"></small>
+					<em id="result">Se realizo la trasacción con exito.</em>
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-success tblack"><span class="glyphicon glyphicon-print"></span> Ver</button>
-					<button class="btn btn-primaty tblack"><span class="glyphicon glyphicon-ok"></span> Continuar</button>
+					<div class="btn-group">
+						<button class="btn btn-success btn-sm tblack" onClick="verOrderBuy();"><span class="glyphicon glyphicon-print"></span> Ver</button>
+						<button class="btn btn-primary btn-sm tblack" data-dismiss="modal"><span class="glyphicon glyphicon-ok"></span> Continuar</button>
+						<button class="btn btn-sm btn-danger" onClick="terminarCotiza();"><span class="glyphicon glyphicon-remove-circle"></span> Terminar</button>	
+					</div>
 				</div>
 			</div>
 		</div>

@@ -1,24 +1,24 @@
 $(document).ready(function () {
-		loaddata();
-		$("#fec").datepicker({ minDate : "0", maxDate : "+6M", changeMonth : true, changeYear : true, showAnim: "slide", dateFormat : "yy-mm-dd" })
+	loaddata();
+	$("#fec").datepicker({ minDate : "0", maxDate : "+6M", changeMonth : true, changeYear : true, showAnim: "slide", dateFormat : "yy-mm-dd" })
 });
 function loaddata () {
-		var prm = {
-			'nro' : $("#nro").val()
+	var prm = {
+		'nro' : $("#nro").val()
+	}
+	$.ajax({
+		url : '/ws/logistica/compare/supplier/cotizacion/',
+		type : 'GET',
+		data : prm,
+		dataType : 'html',
+		success : function (response) {
+			$("#det").html(response);
+			typeMoneda();
+		},
+		error : function (obj,que,otr) {
+			msgError(null,null,null);
 		}
-		$.ajax({
-			url : '/ws/logistica/compare/supplier/cotizacion/',
-			type : 'GET',
-			data : prm,
-			dataType : 'html',
-			success : function (response) {
-				$("#det").html(response);
-				typeMoneda();
-			},
-			error : function (obj,que,otr) {
-				msgError(null,null,null);
-			}
-		});
+	});
 }
 function typeMoneda () {
 	$("input[name=supplier]").each(function () {
@@ -94,7 +94,6 @@ function showCompra (ruc) {
 			}
 		}
 	});
-	
 }
 function showmodal (ruc,tp) {
 	$("#toc").html('Realizar Orden Compra a '+$("#"+ruc).val());
@@ -196,8 +195,6 @@ function cambioMoney () {
 						}else if($mo.text() == 'NUEVO SOLES'){
 							changeD('S',tc);
 						}
-					}else{
-	
 					}
 				}
 			},
@@ -205,9 +202,6 @@ function cambioMoney () {
 				msgError(null,null,null);
 			}
 		});
-
-	//}else{
-	//}
 }
 function changeD (money,tcc) {
 	$("[name=ocmat]").each(function () {
@@ -245,7 +239,7 @@ function saveOrderBuy () {
 		buttons : [{value:'Si'},{value:'No'}],
 		success : function (response) {
 			if (response == 'Si') {
-
+				save();
 			}else if(response == 'No'){
 				$("#mco").modal('show');
 			}
@@ -254,14 +248,87 @@ function saveOrderBuy () {
 }
 function save() {
 	var obj = new Object();
+	obj['mat'] = new Array();
 	$("[name=ocmat]").each(function () {
 		var item = this;
 		var mat = new Array();
 		var id = item.id.substring(2);
-		ar $c = $("#coc"+id);
+		var $c = $("#coc"+id);
 		var $p = $("#poc"+id);
 		var pre = parseFloat($p.html());
 		var cant  = parseFloat($c.html());
-		
+		obj.mat.push(new Array(id,cant,pre));
+	});
+	obj['ruc'] = $("#rucc").val();
+	obj['ncot'] = $("#nroc").val();
+	obj['lug'] = $("#lug").val();
+	obj['doc'] = $("#doc").val();
+	obj['pag'] = $("#dpag").val();
+	obj['mid'] = $("#mo").val();
+	obj['ent'] = $("#fec").val();
+	obj['cont'] = $("#cont").val();
+	/*console.log(obj);
+	for (var i = 0; i < obj.mat.length; i++) {
+		console.log(obj.mat[i]);
+		for (var j = 0; j < obj.mat[i].length; j++) {
+			console.log(obj.mat[i][j]);
+		};
+	}*/
+	var prm = JSON.stringify(obj);
+	console.log(prm);
+	//console.log(JSON.parse(prm));
+	if (prm != '') {
+		$.ajax({
+			url : '/ws/logistica/save/order/buy/',
+			type : 'GET',
+			data : { 'prm':prm},
+			dataType : 'json',
+			success : function (response) {
+				console.log(response);
+				//var json = JSON.parse(response);
+				if (response.status == 'success') {
+					$("#nrooc").html(response.nro);
+					$("#rucoc").html(response.ruc);
+					$("#mcompra").modal('show');
+				}else{
+					msgWarning(null,null,null);
+				}
+			},
+			error : function (obj,que,otr) {
+				msgError(null,null,null);
+			}
+		});
+	}
+}
+function verOrderBuy () {
+	window.open('http://190.41.246.91/web-cotiza/reports/pdfs/system/intordencomprapdf.php?ruc='+$.trim($("#rucoc").html())+'&nro='+$.trim($("#nrooc").html()),'_blank');
+}
+function terminarCotiza () {
+	$("#mcompra").modal('hide');
+	$.msgBox({
+		title : 'Terminar con la Cotización?',
+		content : 'Seguro(a) que desea terminar con la Cotización?',
+		type : 'confirm',
+		opacity : 0.8,
+		buttons : [{value:'Si'},{value:'No'}],
+		success : function (response) {
+			if (response == 'Si') {
+				$.ajax({
+					url : '/ws/logistica/change/status/cotizacion/',
+					type : 'GET',
+					data : { 'nro':$("#nroc").val() },
+					dataType : 'json',
+					success : function (response) {
+						//var json = JSON.parse(response);
+						console.log(response);
+						if (response.status == 'success') {
+							location.href='/logistica/list/cotizacion/';
+						}
+					}
+				})
+			}else if(response == 'No'){
+				$("#mcompra").modal('show');
+			}
+		}
 	});
 }

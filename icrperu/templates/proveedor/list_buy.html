@@ -1,0 +1,38 @@
+{% extends 'basepro.html'%}
+{% block title %}Lista de Ordenes de Compra{% endblock %}
+{% block script %}
+<script>
+	function viewOrderBuy (nro,ruc) {
+		window.open('http://190.41.246.91/web-cotiza/reports/pdfs/system/intordencomprapdf.php?ruc='+ruc+'&nro='+nro,'_blank');
+	}
+</script>
+{% endblock %}
+{% block content %}
+<div class="container well c-success">
+	<h3 class="text-info" >Lista de Ordenes de Compra</h3>
+	{% for row in lbuy %}
+		<div class="bs-callout bs-callout-info">
+			<dl class="dl-horizontal">
+				<dt>Nro Orden de Compra</dt>
+				<dd>{{row.nrocompra}}</dd>
+				<dt>Creado Por</dt>
+				<dd>{{row.nombre}}</dd>
+				<dt>Divisa</dt>
+				<dd>{{row.nomdes}}</dd>
+				<dt>Fecha de Entrega</dt>
+				<dd>{{row.fecent}}</dd>
+				<dt>Estado</dt>
+				<dd>{{row.esnom}}</dd>
+				<dt>Pulsa</dt>
+				<dd>
+					<button title="Pulsame para ver la Orden de Compra" class="btn btn-danger btn-sm" onClick="viewOrderBuy('{{row.nrocompra}}','{{request.session.rucpro}}');">
+						<span class="glyphicon glyphicon-credit-card"></span>
+						<span class="glyphicon glyphicon-shopping-cart"></span>
+					</button>
+				</dd>
+			</dl>
+		</div>
+	{% endfor %}
+</div>
+{% endblock %}
+{% block footer %}{% endblock %}

@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.sessions.models import Session
 from django.db import connection, transaction
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.mail import EmailMultiAlternatives
 
 """
 ###
@@ -42,6 +43,14 @@ def view_index(request):
 		return HttpResponseRedirect('http://190.41.246.91/web/')
 	elif request.method == 'GET':
 		tipo_cambio_sbs()
+		"""		
+		subject, from_email, to = 'hello', 'foxtime03@gmail.com', 'cvaldezchavez@gmail.com'
+		text_content = 'This is an important message.'
+		html_content = '<p>This is an <strong>important</strong> message.</p>'
+		msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+		msg.attach_alternative(html_content, "text/html")
+		msg.send()
+		"""
 		#ctx = { 'dniicr': request.session['dni'], 'nomicr' : request.session['nom'], 'caricr':request.session['car'] }
 		return render_to_response('logistica/home.html',context_instance=RequestContext(request))
 
@@ -52,7 +61,7 @@ def view_logout(request):
 	del	request.session['nomicr']
 	del	request.session['caricr']
 	del request.session['access']
-	return HttpResponseRedirect('http://190.41.246.91/web/')
+	return HttpResponseRedirect('http://190.41.246.91/web/includes/session-destroy.php')
 
 def view_aprobarsuministro(request):
 	if str(request.session.get('access')) != 'success':
@@ -155,6 +164,115 @@ def view_compare_supplier(request,nro):
 		ctx = { 'nro' : nro, 'lsu' : lsu, 'lmo' : mo, 'ldoc' : doc, 'lpag' : pag }
 		return render_to_response('logistica/compare_supplier.html',ctx,context_instance=RequestContext(request))
 
+def view_list_cotizacion_key(request):
+	if str(request.session.get('access')) != 'success':
+		return HttpResponseRedirect('http://190.41.246.91/web/')
+	elif request.method == 'GET':
+		try:
+			cn = connection.cursor()
+			cn.execute("SELECT DISTINCT a.nrocotizacion,a.rucproveedor,p.razonsocial,a.keygen,c.fecha::date FROM logistica.autogenerado a INNER JOIN logistica.cotizacion c "+
+							"ON a.nrocotizacion = c.nrocotizacion INNER JOIN admin.proveedor p ON a.rucproveedor = p.rucproveedor "+
+							"WHERE c.estado LIKE '14' "+
+							"ORDER BY a.nrocotizacion DESC LIMIT 10 OFFSET 0")
+			lkey = dictfetchall(cn)
+			cn.close();
+		except Exception, e:
+			raise e
+			lkey = 'Nothing'
+		ctx = { 'lkey' : lkey }
+		return render_to_response('logistica/list_cotizacion_key.html',ctx,context_instance=RequestContext(request))
+
+def view_upkeep_supplier(request):
+	if str(request.session.get('access')) != 'success':
+		return HttpResponseRedirect('http://190.41.246.91/web/')
+	elif request.method == 'GET':
+		cn = connection.cursor()
+		cn.execute("SELECT DISTINCT paisid,paisnom FROM admin.pais ORDER BY paisnom ASC")
+		lpa = dictfetchall(cn)
+		cn.close()
+		cn = connection.cursor()
+		cn.execute("SELECT * FROM admin.proveedor WHERE esid LIKE '15' ORDER BY razonsocial ASC")
+		lpro = dictfetchall(cn)
+		cn.close()
+		ctx = { 'lpa':lpa, 'lpro' : lpro }
+		return render_to_response('logistica/supplier.html',ctx,context_instance=RequestContext(request))
+
+def view_upkeep_supplier_login(request):
+	if str(request.session.get('access')) != 'success':
+		return HttpResponseRedirect('http://190.41.246.91/web/')
+	elif request.method == 'GET':
+		cn = connection.cursor()
+		cn.execute("SELECT * FROM admin.proveedor WHERE esid LIKE '15' ORDER BY razonsocial ASC")
+		lpro = dictfetchall(cn)
+		cn.close()
+		paginator = Paginator(lpro,8)
+		try:
+			page = request.GET['page']
+		except Exception, e:
+			page = ''
+		try:
+			proveedor = paginator.page(page)
+		except PageNotAnInteger:
+			proveedor = paginator.page(1)
+		except EmptyPage:
+			proveedor = paginator.page(paginator.num_pages)
+		ctx = { 'lpro' : proveedor }
+		return render_to_response('logistica/supplier_login.html',ctx,context_instance=RequestContext(request))
+
+def view_order_buy_single(request):
+	if str(request.session.get('access')) != 'success':
+		return HttpResponseRedirect('http://190.41.246.91/web/')
+	elif request.method == 'GET':
+		cn =  connection.cursor()
+		cn.execute("SELECT DISTINCT matnom FROM admin.materiales ORDER BY matnom ASC")
+		lmat = dictfetchall(cn)
+		cn.close()
+		cn = connection.cursor()
+		cn.execute("SELECT DISTINCT rucproveedor,razonsocial FROM admin.proveedor WHERE esid LIKE '15' ORDER BY razonsocial ASC")
+		lpro = dictfetchall(cn)
+		cn.close()
+		cn = connection.cursor()
+		cn.execute("SELECT monedaid,nomdes FROM admin.moneda")
+		mo = dictfetchall(cn)
+		cn.close()
+		cn = connection.cursor()
+		cn.execute("SELECT DISTINCT documentoid,docnom FROM admin.documentos ORDER BY docnom ASC")
+		doc = dictfetchall(cn)
+		cn.close()
+		cn = connection.cursor()
+		cn.execute("SELECT DISTINCT pagoid,nompag FROM admin.fpago ORDER BY nompag ASC")
+		pag = dictfetchall(cn)
+		cn.close()
+		ctx = { 'lmat':lmat, 'lpro': lpro, 'mo':mo, 'doc':doc,'pag':pag }
+		return render_to_response('logistica/order_buy_single.html',ctx,context_instance=RequestContext(request))
+
+def view_list_orders_buy(request):
+	if str(request.session.get('access')) != 'success':
+		return HttpResponseRedirect('http://190.41.246.91/web/')
+	elif request.method == 'GET':
+		cn = connection.cursor()
+		cn.execute("SELECT c.nrocompra,c.rucproveedor,p.razonsocial,d.docnom,m.nomdes FROM logistica.compras c INNER JOIN admin.proveedor p ON c.rucproveedor LIKE p.rucproveedor INNER JOIN admin.documentos d ON c.documentoid LIKE d.documentoid INNER JOIN admin.moneda m ON c.monedaid LIKE m.monedaid WHERE c.esid LIKE '12' LIMIT 10 OFFSET 0")
+		lbuy = dictfetchall(cn)
+		cn.close()
+		ctx = { 'lbuy' : lbuy }
+		return render_to_response('logistica/list_order_buy.html',ctx,context_instance=RequestContext(request))
+
+def view_list_request_quot(request):
+	if str(request.session.get('access')) != 'success':
+		return HttpResponseRedirect('http://190.41.246.91/web/')
+	elif request.method == 'GET':
+		cn= connection.cursor()
+		cn.execute("SELECT DISTINCT c.nrocotizacion,c.fecha,c.fecreq,d.rucproveedor,s.razonsocial FROM "+
+					"logistica.cotizacion c inner join logistica.detcotizacion d "+
+					"ON c.nrocotizacion like d.nrocotizacion "+
+					"INNER JOIN admin.proveedor s "+
+					"ON d.rucproveedor like s.rucproveedor "+
+					"WHERE c.estado like '14' "+
+					"ORDER BY nrocotizacion ASC")
+		lquot = dictfetchall(cn)
+		cn.close()
+		ctx = { 'lquot':lquot }
+		return render_to_response('logistica/list_request_quotation.html',ctx,context_instance=RequestContext(request))
 
 @transaction.commit_on_success
 def tipo_cambio_sbs():

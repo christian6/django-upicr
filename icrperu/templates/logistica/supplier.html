@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% block title %} Proveedores {% endblock %}
+{% block script %}
+	<script src="/media/js/logistica/supplier.js"></script>
+{% endblock %}
+{% block content %}
+<div class="container well">
+	<h3 class="text-danger"><span class="glyphicon glyphicon-th-large"></span> Proveedores</h3>
+	<div class="well">
+		<div class="row show-grid">
+			<div class="col-md-3">
+				<div class="well">
+					<ul class="nav nav-tabs nav-pills nav-stacked" id="tabpro">
+						<li><a href="#upkeep" data-toggle="tab"> Datos Generales</a></li>
+						<li><a href="#list" data-toggle="tab"> Lista Proveedor</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-md-9">
+				<div class="well">
+					<div class="tab-content">
+						<div class="tab-pane fade" id="upkeep">
+							<h4 class="text-primary"><em>Datos Generales</em></h4>
+							<div class="row show-grid">
+								<div class="col-md-3">
+									<div class="form-group has-info">
+										<label class="control-label">Ruc Proveedor</label>
+										<input type="text" class="form-control input-sm" onKeyPress="return singleNumber(event);" id="ruc" maxlength="11">
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group has-info">
+										<label class="control-label">Razón Social</label>
+										<input type="text" class="form-control input-sm" id="rz">
+									</div>
+								</div>
+								<div class="col-md-5">
+									<div class="form-group has-info">
+										<label class="control-label">Dirección</label>
+										<input type="text" class="form-control input-sm" id="dir">
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group has-info">
+										<label class="control-label">Pais</label>
+										<select class="form-control input-sm" onChange="changePais();" name="cbopa" id="cbopa">
+											{% for row in lpa %}
+											<option value="{{row.paisid}}">{{row.paisnom}}</option>
+											{% endfor %}
+										</select>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group has-info">
+										<label class="control-label">Departamento</label>
+										<select class="form-control input-sm" name="cbodep" onChange="changeDepartamento();" id="cbodep"></select>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group has-info">
+										<label class="control-label">Provincia</label>
+										<select class="form-control input-sm" name="cbopro" id="cbopro" onChange="changeProvincia();"></select>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group has-info">
+										<label class="control-label">Distrito</label>
+										<select class="form-control input-sm" name="cbodist" id="cbodist"></select>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group has-info">
+										<label class="control-label">Telefono</label>
+										<input type="tel" class="form-control input-sm" onKeyPress="return singleNumber(event);" id="tel" maxlength="11">
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group has-info">
+										<label class="control-label">Tipo</label>
+										<select name="cbotipo" id="cbotipo" class="form-control">
+											<option value="JURIDICO">JURIDICO</option>
+											<option value="NATURAL">NATURAL</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group has-info">
+										<label class="control-label">Tipo</label>
+										<select name="cboori" id="cboori" class="form-control">
+											<option value="JURIDICO">NACIONAL</option>
+											<option value="NATURAL">INTERNACIONAL</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group has-info">
+										<label class="control-label">Email</label>
+										<input type="email" id="mail" class="form-control input-sm" placeholder="ejemplo@dominio.com">
+									</div>
+								</div>
+								<div class="col-md-9">
+									<div class="btn-group">
+										<button class="btn btn-warning tblack" onClick="cleaninput();"><span class="glyphicon glyphicon-trash"></span> Limpiar</button>
+										<button class="btn btn-primary" onClick="save();"><span class="glyphicon glyphicon-saved"></span> Guardar Cambios</button>	
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="list">
+							<h4 class="text-primary"><em>Proveedores</em></h4>
+								<div class="table-responsive">
+									<table class="table table-condensed table-hover table-striped">
+										<thead>
+											<tr>
+												<th></th>
+												<th class="text-center">Ruc</th>
+												<th class="text-center">Razon Social</th>
+												<th class="text-center">Dirección</th>
+												<th class="text-center">Tipo</th>
+												<th class="text-center">Telefono</th>
+												<th class="text-center">Editar</th>
+												<th class="text-center">Eliminar</th>
+											</tr>
+										</thead>
+										<tbody>
+											{% for row in lpro %}
+											<tr>
+												<td>{{forloop.counter}}</td>
+												<td>{{row.rucproveedor}}</td>
+												<td>{{row.razonsocial}}</td>
+												<td>{{row.direccion}}</td>
+												<td>{{row.tipo}}</td>
+												<td>{{row.telefono}}</td>
+												<td class="text-center">
+													<button class="btn btn-xs btn-info tblack" onClick="editpro('{{row.rucproveedor}}','{{row.razonsocial}}','{{row.direccion}}','{{row.paisid}}','{{row.departamentoid}}','{{row.provinciaid}}','{{row.distritoid}}','{{row.tipo}}','{{row.telefono}}','{{row.origen}}','{{row.email}}');">
+														<span class="glyphicon glyphicon-edit"></span>
+													</button>
+												</td>
+												<td class="text-center">
+													<button class="btn btn-xs btn-danger tblack" onClick="delpro('{{row.rucproveedor}}','{{row.razonsocial}}');">
+														<span class="glyphicon glyphicon-minus"></span>
+													</button>
+												</td>
+											</tr>
+											{% endfor %}
+										</tbody>
+									</table>
+								</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

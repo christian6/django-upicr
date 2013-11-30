@@ -169,3 +169,13 @@ LOGGING = {
         },
     }
 }
+
+# Aqui va la configuracion del servidor de correos
+#
+"""
+EMAIL_HOST = 'smtp.googlemail.com'
+EMAIL_HOST_USER = 'cvaldezchavez@gmail.com'
+EMAIL_HOST_PASSWORD = 'fronhell'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+"""
