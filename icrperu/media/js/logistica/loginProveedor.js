@@ -37,7 +37,7 @@ function saved () {
 				console.log(response);
 				if (response.status == 'success') {
 					$("#asunto").val('Cambio de Password');
-					$('#texto').val('Se a cambiado la clave para el ingrese al sitio web de ICR PERU, su nueva clave es:<br><br><strong>Clave de acceso : </strong> '+$("#passwd").val()+'<br><br>*** System ICR PERU ***');
+					$('#texto').val('Se a cambiado la clave para el ingrese al sitio web de ICR PERU, su nueva clave es:<br><br><strong>Usuario    :   </strong>'+$('#ruc').html()+'<br> <strong>Clave de acceso : </strong> '+$("#passwd").val()+'<br><br>*** System ICR PERU ***');
 					$("#mmail").modal('show');
 				}
 			},
@@ -51,6 +51,7 @@ function saved () {
 }
 function send () {
 	dataMail($("#ruc").html());
+	setTimeout(function() { location.reload(); }, 2600);
 }
 function dataMail (ruc) {
 	if( ruc.length == 11){

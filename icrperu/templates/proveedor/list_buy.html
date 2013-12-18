@@ -5,6 +5,12 @@
 	function viewOrderBuy (nro,ruc) {
 		window.open('http://190.41.246.91/web-cotiza/reports/pdfs/system/intordencomprapdf.php?ruc='+ruc+'&nro='+nro,'_blank');
 	}
+	var viewDeposito = function  (nro) {
+		window.open('/media/store/compras/'+nro+'/DEP-'+nro+'.pdf','_blank');
+	}
+	$(document).ready(function () {
+		$('button').tooltip();
+	});
 </script>
 {% endblock %}
 {% block content %}
@@ -25,9 +31,12 @@
 				<dd>{{row.esnom}}</dd>
 				<dt>Pulsa</dt>
 				<dd>
-					<button title="Pulsame para ver la Orden de Compra" class="btn btn-danger btn-sm" onClick="viewOrderBuy('{{row.nrocompra}}','{{request.session.rucpro}}');">
+					<button data-toggle="tooltip" data-placement="bottom" data-original-title="Pulsame para ver la Orden de Compra" class="btn btn-danger btn-sm" onClick="viewOrderBuy('{{row.nrocompra}}','{{request.session.rucpro}}');">
 						<span class="glyphicon glyphicon-credit-card"></span>
 						<span class="glyphicon glyphicon-shopping-cart"></span>
+					</button>
+					<button data-toggle="tooltip" data-placement="bottom" data-original-title="Pulsame para ver Depósito" class="btn btn-info btn-sm tblack" onClick="viewDeposito('{{row.nrocompra}}');">
+						<span class="glyphicon glyphicon-book"></span>
 					</button>
 				</dd>
 			</dl>

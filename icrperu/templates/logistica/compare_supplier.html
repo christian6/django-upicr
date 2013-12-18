@@ -15,11 +15,15 @@
 	<div class="container well">
 		<h3 class="text-primary">Comparar Cotizaciones {{nro}}</h3>
 		<input type="hidden" id="nro" value="{{nro}}">
+		<input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}">
 		<div class="bs-callout bs-callout-info">
 			<span>
 			{% for row in lsu %}
 				<p>
-					<span class="text-danger glyphicon glyphicon-ok-circle"></span> {{row.rucproveedor}} {{row.razonsocial}}
+					<a target="_blank" href="http://190.41.246.91/web/reports/almacen/pdf/system/intsolcotpdf.php?ruc={{row.rucproveedor}}&nro={{nro}}">
+						<span class="text-danger glyphicon glyphicon-ok-circle"></span>
+						{{row.rucproveedor}} {{row.razonsocial}}
+					</a>
 					<input type="hidden" name="supplier" value="{{row.rucproveedor}}">
 					<input type="hidden" id="{{row.rucproveedor}}" value="{{row.razonsocial}}">
 				</p>
@@ -68,7 +72,7 @@
 				</tbody>
 				<tfoot>
 					<tr class="c-yellow">
-						<td colspan="7" class="text-right"> <strong>Total</strong> </td>
+						<td colspan="7" class="text-right"> <strong>Total</strong> <small><em>(no incluye IGV)</em></small> </td>
 						{% for row in lsu %}
 							<th id="t{{row.rucproveedor}}" class="text-center"></th>
 							<th id="tm{{row.rucproveedor}}"></th>
@@ -190,6 +194,8 @@
 				</div>
 				<div class="modal-footer">
 					<button class="btn btn-warning tblack pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancelar</button>
+					<input type="file" id="hdep" accept="application/pdf" class="hide">
+					<button class="btn btn-info tblack" onClick="openDeposito();"><span class="glyphicon glyphicon-book"></span> Adjuntar Depósito</button>
 					<button class="btn btn-primary" onClick="saveOrderBuy();"><span class="glyphicon glyphicon-shopping-cart"></span> Comprar</button>
 				</div>
 			</div>

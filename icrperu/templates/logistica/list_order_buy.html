@@ -52,6 +52,7 @@
 					<th class="text-center">Documento de Pago</th>
 					<th class="text-center">Moneda</th>
 					<th class="text-center">Ver</th>
+					<th class="text-center">Anular</th>
 				</tr>
 			</thead>
 			<tbody id="tbo">
@@ -66,6 +67,11 @@
 							<a class="tblack" href="http://190.41.246.91/web-cotiza/reports/pdfs/system/intordencomprapdf.php?ruc={{row.rucproveedor}}&nro={{row.nrocompra}}" target="_blank">
 							<span class="glyphicon glyphicon-export"></span>
 						</a>
+						</td>
+						<td class="text-center">
+							<button class="btn btn-danger tblack btn-xs" onClick="anularBuy('{{row.nrocompra}}');">
+								<span class="glyphicon glyphicon-remove-circle"></span>
+							</button>
 						</td>
 					</tr>
 				{% endfor %}

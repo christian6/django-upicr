@@ -1,5 +1,5 @@
 $(function () {
-	$("#fi,#ff").datepicker({ minDate: "-12M" , maxDate: "0" , changeMonth: true, changeYear: true, showAnim: "slide", dateFormat: "yy/mm/dd"});
+	$("#fi,#ff").datepicker({ minDate: "-12M" , maxDate: "0" , changeMonth: true, changeYear: true, showAnim: "slide", dateFormat: "yy-mm-dd"});
 });
 function radiosearch (obj) {
 	if (obj.checked) {
@@ -62,6 +62,7 @@ function listsuminstro () {
 			type : 'GET',
 			dataType : 'html',
 			success : function (response) {
+				//console.log(response);
 				response = response.split('|');
 				if (response[1] == 'success') {
 					$("#tbld").html(response[0]);

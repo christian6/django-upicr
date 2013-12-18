@@ -125,7 +125,7 @@ def view_list_cotizacion(request):
 		try:
 			page = request.GET['page']
 		except Exception, e:
-			page = ''
+			page = 1
 		try:
 			cotizacion = paginator.page(page)
 		except PageNotAnInteger:
@@ -268,11 +268,17 @@ def view_list_request_quot(request):
 					"INNER JOIN admin.proveedor s "+
 					"ON d.rucproveedor like s.rucproveedor "+
 					"WHERE c.estado like '14' "+
-					"ORDER BY nrocotizacion ASC")
+					"ORDER BY nrocotizacion DESC")
 		lquot = dictfetchall(cn)
 		cn.close()
 		ctx = { 'lquot':lquot }
 		return render_to_response('logistica/list_request_quotation.html',ctx,context_instance=RequestContext(request))
+
+def view_upload_stock(request):
+	if str(request.session.get('access')) != 'success':
+		return HttpResponseRedirect('http://190.41.246.91/web/')
+	elif request.method == 'GET':
+		return render_to_response('logistica/upload_stock.html',context_instance=RequestContext(request))
 
 @transaction.commit_on_success
 def tipo_cambio_sbs():

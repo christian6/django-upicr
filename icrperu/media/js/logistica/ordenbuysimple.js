@@ -286,23 +286,30 @@ function savedOrderbuy () {
 								pre = parseFloat($p.html());
 						obj.mat.push(new Array(id,cant,pre));
 					});
-					var prm = {
-						'pro' : $("#pro").val(),
-						'lug' : $("#lug").val(),
-						'doc' : $("#doc").val(),
-						'pag' : $("#pag").val(),
-						'mo' : $("#mo").val(),
-						'fec' : $("#fec").val(),
-						'cont' : $("#cont").val(),
-						'csrfmiddlewaretoken' : $("input[name=csrfmiddlewaretoken]").val(),
-						'lmat' : JSON.stringify(obj)
+					var prm = new FormData();
+					prm.append('pro', $("#pro").val());
+					prm.append('lug', $("#lug").val());
+					prm.append('doc', $("#doc").val());
+					prm.append('pag', $("#pag").val());
+					prm.append('mo', $("#mo").val());
+					prm.append('fec', $("#fec").val());
+					prm.append('cont', $("#cont").val());
+					prm.append('csrfmiddlewaretoken', $("input[name=csrfmiddlewaretoken]").val());
+					prm.append('lmat', JSON.stringify(obj));
+					var inputfile = document.getElementById("hdep");
+					var file = inputfile.files[0];
+					if (file != null) {
+						prm.append('archivo', file);
 					}
 					$.ajax({
 						url : '/ws/logistica/saved/order/buy/single/',
 						type : 'POST',
 						data : prm,
+						contentType : false,
+						processData : false,
+						cache : false,
 						success : function (response) {
-							//console.log(response);
+							console.log(response);
 							if (response.status == 'success') {
 								msgInfo("Orden de Compra","<em>Orden de Compra generada:<em><br>Nro : "+response.nro,false);
 								list_tmp_compra();
@@ -371,4 +378,7 @@ function uploadFileBuy () {
 		msgWarning(null,'No se a cargado ningún archivo, carge uno para continuar.',null);
 		setTimeout(function() { $("#mreadxls").modal('show'); }, 2600);
 	}
+}
+function openadjuntar () {
+	$('#hdep').click();
 }

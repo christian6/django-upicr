@@ -31,6 +31,8 @@ urlpatterns = patterns('icrperu.apps.logistica.inclogistica.views',
 	url(r'^consulting/mat/buy/$','ws_obtener_det_mat_buy'),
 	url(r'^save/order/buy/$','ws_save_order_buy'),
 	url(r'^change/status/cotizacion/$','wv_change_status_cotizacion'),
+	url(r'^update/anular/quotation/$','ws_update_anular_quotation'),
+	url(r'^update/anular/buy/$','ws_update_anular_buy'),
 	# Compra
 	url(r'^list/tmp/compra/$','ws_list_tmp_compra'),
 	url(r'^delete/tmp/det/buy/$','ws_delete_tmp_det_buy'),
@@ -47,6 +49,7 @@ urlpatterns = patterns('icrperu.apps.logistica.inclogistica.views',
 	url(r'^delete/supplier/$','ws_delete_supplier'),
 	url(r'^saved/login/supplier/$','ws_saved_login_supplier'),
 	url(r'^consulting/order/buy/$','ws_consulting_order_buy'),
+	url(r'^upload/file/stock/$','ws_upload_file_stock'),
 	# -- Tipo de Cambio --
 	url(r'^consulting/type/change/money/$','ws_type_change_money'),
 	

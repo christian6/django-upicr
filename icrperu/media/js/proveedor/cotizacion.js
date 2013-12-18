@@ -27,7 +27,13 @@ function readytotal () {
 			tot += im;
 		}
 	}
-	$("#tot").html('$'+tot.toFixed(2));
+	var imp = 0.18;
+	var igv = 0,total=0;
+	igv = (tot * imp);
+	total = ( tot + igv);
+	$("#tot").html('$ '+tot.toFixed(2));
+	$("#igv").html('$ '+igv.toFixed(2));
+	$("#total").html('$ '+total.toFixed(2));
 }
 function importtotal () {
 	var count = document.getElementsByName('import');
@@ -38,7 +44,13 @@ function importtotal () {
 			tot += parseFloat(count[i].value);
 		}
 	}
-	$("#tot").html('$'+tot.toFixed(2));
+	var imp = 0.18;
+	var igv = 0,total=0;
+	igv = (tot * imp);
+	total = ( tot + igv);
+	$("#tot").html('$ '+tot.toFixed(2));
+	$("#igv").html('$ '+igv.toFixed(2));
+	$("#total").html('$ '+total.toFixed(2));
 }
 function showhojatec (id) {
 	$("#"+id).click();

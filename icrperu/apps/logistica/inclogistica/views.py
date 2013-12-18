@@ -505,41 +505,64 @@ def ws_type_change_money(request):
 
 @transaction.autocommit
 def ws_save_order_buy(request):
-	prm = request.GET.get('prm')
-	#data = simplejson.dumps(data)
-	data = simplejson.loads(prm)
-	da = {}
-	# Obteniendo Codigo de Orden de Compra
-	cn = connection.cursor()
-	cn.execute("SELECT logistica.spnewcompra()")
-	ncod = cn.fetchone()
-	cn.close()
-	
-	try:
-		#Generando Orden de Compra
+	if request.method == 'POST':
+		prm = request.POST.get('prm')
+		#data = simplejson.dumps(data)
+		data = simplejson.loads(prm)
+		da = {}
+		# Obteniendo Codigo de Orden de Compra
 		cn = connection.cursor()
-		cn.execute("INSERT INTO logistica.compras(nrocompra,rucproveedor,empdni,nrocotizacion,lugent,documentoid,pagoid,monedaid,fecent,contacto,esid) VALUES('"+ncod[0]+"','"+data['ruc']+"','"+request.session.get('dniicr')+"','"+data['ncot']+"','"+data['lug']+"','"+data['doc']+"','"+data['pag']+"','"+data['mid']+"','"+data['ent']+"'::date,'"+data['cont']+"','12')")
-		transaction.set_dirty()
-		transaction.commit()
+		cn.execute("SELECT logistica.spnewcompra()")
+		ncod = cn.fetchone()
 		cn.close()
-
-		for x in xrange(0,len(data['mat'])):
-			#da += str(data['mat'][x][0])+"', "+str(data['mat'][x][1])+", "+str(data['mat'][x][2])+'<br>'
+		
+		try:
+			#Generando Orden de Compra
 			cn = connection.cursor()
-			cn.execute("INSERT INTO logistica.detcompras(nrocompra,materialesid,cantidad,precio,cantstatic,flag) VALUES ('"+ncod[0]+"', '"+str(data['mat'][x][0])+"', "+str(data['mat'][x][1])+", "+str(data['mat'][x][2])+", "+str(data['mat'][x][1])+", '0')")
-			#transaction.set_dirty()
+			cn.execute("INSERT INTO logistica.compras(nrocompra,rucproveedor,empdni,nrocotizacion,lugent,documentoid,pagoid,monedaid,fecent,contacto,esid) VALUES('"+ncod[0]+"','"+data['ruc']+"','"+request.session.get('dniicr')+"','"+data['ncot']+"','"+data['lug']+"','"+data['doc']+"','"+data['pag']+"','"+data['mid']+"','"+data['ent']+"'::date,'"+data['cont']+"','12')")
+			transaction.set_dirty()
 			transaction.commit()
 			cn.close()
-			#da += str(data['mat'][x])+ ' > len '+str(len(data['mat'][x]))	
 
-		da['status'] = 'success'
-		da['nro'] = ncod[0]
-		da['ruc'] = data['ruc']
-	except Exception, e:
-		da['status'] = 'fail'
+			for x in xrange(0,len(data['mat'])):
+				#da += str(data['mat'][x][0])+"', "+str(data['mat'][x][1])+", "+str(data['mat'][x][2])+'<br>'
+				cn = connection.cursor()
+				cn.execute("INSERT INTO logistica.detcompras(nrocompra,materialesid,cantidad,precio,cantstatic,flag) VALUES ('"+ncod[0]+"', '"+str(data['mat'][x][0])+"', "+str(data['mat'][x][1])+", "+str(data['mat'][x][2])+", "+str(data['mat'][x][1])+", '0')")
+				#transaction.set_dirty()
+				transaction.commit()
+				cn.close()
+				#da += str(data['mat'][x])+ ' > len '+str(len(data['mat'][x]))	
 
-	da = simplejson.dumps(da)
-	return HttpResponse(da, mimetype='application/json')
+			da['status'] = 'success'
+			da['nro'] = ncod[0]
+			da['ruc'] = data['ruc']
+		except Exception, e:
+			da['status'] = 'fail'
+
+		try:
+			# Agregar hoja de deposito
+			import os
+			from django.conf import settings
+			## Upload file xls 
+			path = settings.PATH_PROJECT
+			com = 'media/store/compras/'+ncod[0]+'/'
+			pathabs = os.path.join(path,com)
+			if not os.path.exists(pathabs):
+				os.makedirs(pathabs,0777)
+				os.chmod(pathabs,0777)
+
+			f = request.FILES['archivo']
+			pathabs += 'DEP-'+ncod[0]+'.pdf'
+			destination = open(pathabs, 'wb+')
+			for chunk in f.chunks():
+				destination.write(chunk)
+			destination.close()
+			os.chmod(pathabs,0777);
+		except Exception, e:
+			raise e
+
+		data = simplejson.dumps(da)
+		return HttpResponse(data, mimetype='application/json')
 
 @transaction.autocommit
 def wv_change_status_cotizacion(request):
@@ -555,7 +578,7 @@ def wv_change_status_cotizacion(request):
 
 def wv_search_key_cotizacion(request):
 	if request.method == 'GET':
-		query = "SELECT DISTINCT a.nrocotizacion,a.rucproveedor,p.razonsocial,a.keygen,c.fecha::date::varchar FROM logistica.autogenerado a INNER JOIN logistica.cotizacion c ON a.nrocotizacion = c.nrocotizacion INNER JOIN admin.proveedor p ON a.rucproveedor = p.rucproveedor WHERE c.estado LIKE '14' "
+		query = "SELECT DISTINCT c.nrocotizacion,a.rucproveedor,p.razonsocial,a.keygen,c.fecha::date::varchar FROM logistica.autogenerado a INNER JOIN logistica.cotizacion c ON a.nrocotizacion LIKE c.nrocotizacion INNER JOIN admin.proveedor p ON a.rucproveedor = p.rucproveedor WHERE c.estado LIKE '14' "
 		if request.GET.get('type') == 'nro':
 			query = '%s %s %s'%(query," AND c.nrocotizacion LIKE '"+request.GET.get('nro')+"' ","ORDER BY c.nrocotizacion DESC")
 		elif request.GET.get('type') != 'nro':
@@ -570,10 +593,11 @@ def wv_search_key_cotizacion(request):
 			ldet = dictfetchall(cn)
 			cn.close()
 			da['status'] = 'success'
+			da['list'] = ldet
 		except Exception, e:
-			raise e
+			#raise e
 			da['status'] = 'fail'
-		da['list'] = ldet
+			da['query'] = query
 		data = simplejson.dumps(da)
 		return HttpResponse(data,mimetype='application/json')
 
@@ -929,6 +953,28 @@ def ws_saved_order_buy_single(request):
 		except Exception, e:
 			da['status'] = 'fail'
 
+		try:
+			# Agregar hoja de deposito
+			import os
+			from django.conf import settings
+			## Upload file xls 
+			path = settings.PATH_PROJECT
+			com = 'media/store/compras/'+ncod[0]+'/'
+			pathabs = os.path.join(path,com)
+			if not os.path.exists(pathabs):
+				os.makedirs(pathabs,0777)
+				os.chmod(pathabs,0777)
+
+			f = request.FILES['archivo']
+			pathabs += 'DEP-'+ncod[0]+'.pdf'
+			destination = open(pathabs, 'wb+')
+			for chunk in f.chunks():
+				destination.write(chunk)
+			destination.close()
+			os.chmod(pathabs,0777);
+		except Exception, e:
+			raise e
+
 		da = simplejson.dumps(da)
 		return HttpResponse(da, mimetype='application/json')
 
@@ -953,5 +999,121 @@ def ws_consulting_order_buy(request):
 			da['lbuy'] = lbuy
 		except Exception, e:
 			da['status'] = 'fail'
+		data = simplejson.dumps(da)
+		return HttpResponse(data, mimetype='application/json')
+
+@transaction.autocommit
+def ws_upload_file_stock(request):
+	if request.method == 'POST':
+		import os
+		import random
+		from django.conf import settings
+		## Upload file xls 
+		path = settings.PATH_PROJECT
+		com = 'media/store/templates/stock/'
+		pathabs = os.path.join(path,com)
+		if not os.path.exists(pathabs):
+			os.makedirs(pathabs,0777)
+			os.chmod(pathabs,0777)
+
+		f = request.FILES['archivo']
+		pathabs += 'stock.xls'
+		destination = open(pathabs, 'wb+')
+		for chunk in f.chunks():
+			destination.write(chunk)
+		destination.close()
+		os.chmod(pathabs,0777);
+		### Ready file Xls
+		import xlrd
+		da = {}
+		try:
+			# declaramos un libro
+			book = xlrd.open_workbook(pathabs,encoding_override='utf-8')
+			## obtenemos las hojas existentes
+			#sheets = book.sheet_name()
+			# seleccionamos la hoja que vamos a trabajar
+			#sheet = book.sheet_by_index(0);
+			sheet = book.sheet_by_name('Salida');
+			## Obtener datos de la hoja
+			mne = []
+			men = []
+			for x in range(2,sheet.nrows):
+				# obteniendo codigo de material y cantidad
+				matid = sheet.cell(x,0)
+				if len(str(matid.value)) == 15:
+					cant = sheet.cell(x,9)  # 9 y 13 nro columna xls
+					#pre = sheet.cell(x,6)
+					# Consultado la existencia del material
+					cn = connection.cursor()
+					cn.execute("SELECT COUNT(*) FROM admin.materiales WHERE materialesid LIKE '"+str(int(matid.value))+"'")
+					exists = cn.fetchone()
+					cn.close()
+					if exists[0] > 0:
+						men.append(str(int(matid.value)))
+						cn = connection.cursor()
+						cn.execute("SELECT COUNT(*) FROM almacen.inventario WHERE materialesid LIKE '"+str(int(matid.value))+"' AND anio LIKE '2013' ")
+						inv = cn.fetchone()
+						cn.close()
+						if inv[0] > 0:
+							cn = connection.cursor()
+							cn.execute("SELECT stock FROM almacen.inventario WHERE materialesid LIKE '"+str(int(matid.value))+"' AND anio LIKE '2013'")
+							stk = cn.fetchone()
+							cn.close()
+							## accediendo a la base de datos y guardando los datos obtenidos
+							ac = (stk[0] + float(cant.value))
+							cn = connection.cursor()
+							cn.execute("UPDATE almacen.inventario SET stock = "+str(ac)+" WHERE materialesid LIKE '"+str(int(matid.value))+"' AND anio LIKE '2013' ")
+							transaction.commit()
+							cn.close()
+						else:
+							cn = connection.cursor()
+							pre = random.randrange(1,60)
+							cn.execute("INSERT INTO almacen.inventario VALUES('"+str(int(matid.value))+"','0001',"+str(pre)+","+str((pre+(pre*0.10)))+",0,"+str(cant.value)+",0,0,'2013',now()::date,'OC00000000','10704928501','23')")
+							transaction.commit()
+							cn.close()
+					else:
+						mne.append(str(int(matid.value)))
+
+			da['status'] = 'success'
+			da['mats'] = mne
+			da['enc'] = men
+			os.remove(pathabs)
+		except Exception, e:
+			transaction.rollback()
+			da['status'] = 'fail'
+		data = simplejson.dumps(da)
+		return HttpResponse(data, mimetype='application/json')
+
+@transaction.autocommit
+def ws_update_anular_quotation(request):
+	if request.method == 'GET':
+		da = {}
+		try:
+			cn = connection.cursor()
+			cn.execute("UPDATE logistica.cotizacion SET estado = '45' WHERE nrocotizacion LIKE '"+request.GET.get('nro')+"'")
+			transaction.commit()
+			cn.close()
+			da['status'] = 'success'
+		except Exception, e:
+			raise e
+			da['status'] = 'fail'
+			transaction.rollback()
+		data = simplejson.dumps(da)
+		return HttpResponse(data, mimetype='application/json')
+
+@transaction.autocommit
+def ws_update_anular_buy(request):
+	if request.method == 'GET':
+		da = {}
+		try:
+			cn = connection.cursor()
+			cn.execute("UPDATE logistica.compras SET esid = '09' WHERE nrocompra LIKE '"+request.GET.get('nro')+"'")
+			transaction.commit()
+			cn.close()
+			da['status'] = 'success'
+		except Exception, e:
+			raise e
+			da['status'] = 'fail'
+			transaction.rollback()
 		data = simplejson.dumps(da)
 		return HttpResponse(data, mimetype='application/json')

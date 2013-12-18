@@ -20,4 +20,5 @@ urlpatterns = patterns('icrperu.apps.logistica.views',
 	url(r'^proveedor/login/$','view_upkeep_supplier_login',name='vw_supplier_login_upkeep'),
 	url(r'^list/orders/buy/$','view_list_orders_buy',name='vw_list_orders_buy'),
 	url(r'^list/request/quot/$','view_list_request_quot',name='vw_list_request_quot'),
+	url(r'^upload/stock/$','view_upload_stock',name='vw_upload_stock'),
 )

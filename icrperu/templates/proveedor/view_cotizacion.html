@@ -31,7 +31,11 @@
 {% endblock %}
 {% block content %}
 <div class="container well c-success">
-	<h3 class="text-success">Cotizaciones {{nro}} <span class="glyphicon glyphicon-cloud-download"></span></h3>
+	<h3 class="text-success">Cotizaciones {{nro}}
+		<a href="http://190.41.246.91/web/reports/almacen/pdf/solcotpdf.php?ruc={{ det.0.rucproveedor }}&nro={{nro}}" target="_blank">
+			<span class="glyphicon glyphicon-cloud-download"></span>
+		</a>
+	</h3>
 	<input type="hidden" id="nro" value="{{nro}}">
 	<fieldset id="f1" class="c-info text-primary">
 		<legent>
@@ -184,8 +188,16 @@
 			</tbody>
 			<tfoot>
 				<tr>
-					<th colspan="6" class="c-blue"><p class="text-right">Total</p></th>
+					<th colspan="6" class="c-blue"><p class="text-right">Precio Base</p></th>
 					<th class="c-info text-right" id="tot">$</th>
+				</tr>
+				<tr>
+					<th colspan="6" class="c-blue"><p class="text-right">IGV 18% </p></th>
+					<th class="c-info text-right" id="igv">$</th>
+				</tr>
+				<tr>
+					<th colspan="6" class="c-blue"><p class="text-right">Total</p></th>
+					<th class="c-info text-right" id="total">$</th>
 				</tr>
 			</tfoot>
 		</table>	

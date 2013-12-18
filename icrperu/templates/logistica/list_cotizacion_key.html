@@ -53,6 +53,7 @@
 					<th class="text-center">Fecha</th>
 					<th class="text-center">Ver</th>
 					<th class="text-center">E-mail</th>
+					<th class="text-center">Anular</th>
 				</tr>
 			</thead>
 			<tbody id="tb">
@@ -68,6 +69,11 @@
 					<td class="text-center">
 						<button class="btn btn-xs btn-warning tblack" onClick="confirmMsg('{{row.nrocotizacion}}','{{row.razonsocial}}','{{row.keygen}}');">
 							<span class="glyphicon glyphicon-envelope"></span>
+						</button>
+					</td>
+					<td class="text-center">
+						<button class="btn btn-xs btn-danger tblack" data-toggle="tooltip" data-placement="top" data-original-title="Anular Cotizacón" onClick="anularCotizacion('{{row.nrocotizacion}}');">
+							<span class="glyphicon glyphicon-remove-circle"></span>
 						</button>
 					</td>
 				</tr>

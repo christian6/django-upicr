@@ -274,14 +274,25 @@ function save() {
 			console.log(obj.mat[i][j]);
 		};
 	}*/
-	var prm = JSON.stringify(obj);
-	console.log(prm);
+	//var prm = JSON.stringify(obj);
+	var prm = new FormData();
+	prm.append('prm', JSON.stringify(obj));
+	prm.append('csrfmiddlewaretoken', $("input[name=csrfmiddlewaretoken]").val());
+	var inputfile = document.getElementById("hdep");
+	var file = inputfile.files[0];
+	if (file != null) {
+		prm.append('archivo', file);
+	}
+	//console.log(prm);
 	//console.log(JSON.parse(prm));
 	if (prm != '') {
 		$.ajax({
 			url : '/ws/logistica/save/order/buy/',
-			type : 'GET',
-			data : { 'prm':prm},
+			type : 'POST',
+			data : prm,
+			contentType : false,
+			processData : false,
+			cache : false,
 			dataType : 'json',
 			success : function (response) {
 				console.log(response);
@@ -299,6 +310,9 @@ function save() {
 			}
 		});
 	}
+}
+function openDeposito () {
+	$("#hdep").click();
 }
 function verOrderBuy () {
 	window.open('http://190.41.246.91/web-cotiza/reports/pdfs/system/intordencomprapdf.php?ruc='+$.trim($("#rucoc").html())+'&nro='+$.trim($("#nrooc").html()),'_blank');

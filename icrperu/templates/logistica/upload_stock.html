@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}Stock{% endblock %}
+{% block script %}
+<script>
+	$(document).ready(function () {
+		$(".car").click(function () {
+			btninputfile();
+		});
+		$('.btn-primary').click(function  () {
+			$('.progress').addClass('active progress-striped');
+			$('.msg').removeClass('hide');
+			uploadfile();
+		});
+	});
+	var charning = function () {
+		var file = document.getElementById('file');
+		var content = file.files[0];
+		if (content != null) {
+			var name = content.name;
+			name = name.split('.');
+			if (name[name.length - 1] == 'xls') {
+				$(".name").html(content.name);
+				$(".bs-callout-info,.btn-primary").removeClass('hide');
+			}else{
+				msgInfo(null,'El archivo no tiene el formato deseado!',null);
+			}
+		}
+	}
+	var btninputfile = function () {
+		$("#file").click();
+	}
+	var uploadfile = function () {
+		var inputfile = document.getElementById("file");
+		var file = inputfile.files[0];
+		if (file != null) {
+			var token = $("input[name=csrfmiddlewaretoken]").val();
+			console.log(token);
+			var data = new FormData();
+			data.append('archivo',file);
+			data.append('csrfmiddlewaretoken',token);
+
+			$.ajax({
+				url : '/ws/logistica/upload/file/stock/',
+				type : 'POST',
+				data : data,
+				contentType : false,
+				processData : false,
+				cache : false,
+				success : function (response) {
+					console.log(response);
+					if (response.status == 'success') {
+						msgInfo('Se ha actualizado el stock del almacén');
+						setTimeout(function() { location.reload(); }, 2000);
+					};
+				},
+				error : function (obj,que,otr) {
+					msgError(null,null,null);
+				}
+			});
+		};
+	}
+</script>
+{% endblock %}
+{% block content %}
+<div class="container well">
+	<h3><span class="glyphicon glyphicon-upload"></span> Leer y Actualizar Stock</h3>
+	<div class="row show-grid">
+		<div class="col-md-6">
+			<div class="bs-callout bs-callout-success">
+				<div class="form-group has-success">
+					<label for="" class="control-label">Cargar Archivo</label>
+					<input type="file" onChange="charning();" id="file" class="form-control hide">
+					<div class="alert alert-block alert-success">
+						<button class="btn btn-success tblack car"><span class="glyphicon glyphicon-file"></span> Archivo</button>
+						<em class='name'></em>
+						<button class="btn btn-primary btn-xs hide"><span class="glyphicon glyphicon-upload"></span> Subir Archivo</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="bs-callout bs-callout-info text-info hide">
+				<em>Listo para cargar archivo al server</em>
+				<div class="progress">
+					<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+				  	<span class="sr-only">40% Complete (success)</span>
+				 	</div>
+				</div>
+				<input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}">
+				<em class="msg hide">Se esta cargando, espere por favor.</em>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
