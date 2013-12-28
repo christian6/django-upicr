@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+{% block title %}Devolución a Proveedor{% endblock %}
+{% block script %}
+<script src="/media/js/logistica/returnssupplier.js"></script>
+{% endblock %}
+{% block content %}
+<div class="container well" id="container1">
+	<h3 class="text-info"><span class="glyphicon glyphicon-list"></span> Devoluciones a Proveedor</h3>
+	<div class="bs-callout bs-callout-info">
+		<em>Busque de Notas de Ingreso al Almacén</em>
+		<div class="row show-grid">
+			<div class="col-md-11">
+				<div class="alert alert-info col-md-3">
+						<label class="inline-radio"><input type="radio" name="rbtn" value='n'> Nro Nota Ingreso </label>
+						<label class="inline-radio"><input type="radio" name="rbtn" value='f'> Fechas </label>
+				</div>
+			</div>
+			<div class="col-md-2">
+				<div class="form-group has-info">
+					<label class="control-label">Nota Ingreso</label>
+					<input type="text" id="nro" class="form-control input-sm">
+				</div>
+			</div>
+			<div class="col-md-2">
+				<div class="form-group has-info">
+					<label class="control-label">Fecha Inicio</label>
+					<input type="text" id="feci" class="form-control input-sm">
+				</div>
+			</div>
+			<div class="col-md-2">
+				<div class="form-group has-info">
+					<label class="control-label">Fecha Fin</label>
+					<input type="text" id="fecf" class="form-control input-sm">
+				</div>
+			</div>
+			<div class="col-md-2">
+				<div class="form-group has-info">
+					<label for="">&nbsp;</label>
+					<button class="btn btn-primary"><span class="glyphicon glyphicon-search"></span> Buscar</button>
+				</div>
+			</div>
+		</div>
+	</div>	
+	<div class="table-responsive">
+		<table class="table table-c-danger table-bordered table-condensed table-hover">
+			<thead>
+				<tr>
+					<th class="text-center"></th>
+					<th class="text-center">Nro Ingreso</th>
+					<th class="text-center">Orden Compra</th>
+					<th class="text-center">Almacén</th>
+					<th class="text-center">Fecha</th>
+					<th class="text-center">Ver</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for row in lni %}
+					<tr>
+					<td class="text-center">{{forloop.counter}}</td>
+					<td>{{row.nroningreso}}</td>
+					<td>{{row.nrocompra}}</td>
+					<td>{{row.descri}}</td>
+					<td class="text-center">{{row.fecha|date:"SHORT_DATE_FORMAT"}}</td>
+					<td class="text-center">
+						<a onClick="detailNoteEntry('{{row.nroningreso}}','{{row.almacenid}}','{{row.nrocompra}}');" id="move"><span class="glyphicon glyphicon-export"></span></a>
+					</td>
+				{% endfor %}
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="6" class="text-center">
+						<ul class="pagination">
+							{% if lni.has_previous %}
+								<li><a href="?page={{ lni.previous_page_number }}">&laquo;</a></li>
+							{% endif %}
+							{% for i in lni.paginator.page_range %}
+								<li {% if i == lni.number %}class="active"{% endif %} > <a href="?page={{i}}">{{i}}</a> </li>
+							{% endfor %}
+							{% if lni.has_next %}
+								<li><a href="?page={{ lni.next_page_number }}">&raquo;</a></li>
+							{% endif %}
+						</ul>
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+		<div id="container2"></div>
+	</div>
+</div>
+<div class="container well">
+		<h3>Detalle de Nota de Ingreso Nro <span class='nni'></span> </h3>
+		<div class="table-responsive">
+			<table class="table table-codensed table-hover table-striped">
+				<caption class="text-left">
+					<div class="btn-group">
+						<button class="btn btn-success tblack opensaved"><span class="glyphicon glyphicon-saved"></span> Guardar</button>
+						<button class="btn btn-primary" id="btnch"><span class="glyphicon glyphicon-unchecked"></span> <span class="btn-text">Limpiar</span></button>
+						<button id="btnb" class="btn btn-warning tblack"><span class="glyphicon glyphicon-arrow-up"></span> Regresar</button>
+					</div>
+				</caption>
+				<thead>
+					<tr>
+						<th></th>
+						<th>Codigo</th>
+						<th>Descripción</th>
+						<th>Medida</th>
+						<th>Unidad</th>
+						<th>Cantidad</th>
+						<th>Check</th>
+					</tr>
+				</thead>
+				<tbody id="tbd"></tbody>
+			</table>
+		</div>
+</div>
+<div id="mod" class="modal fade in">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<a data-dismiss="modal" class="close">&times;</a>
+				<h4 class="text-info">Guardar Devolución a Proveedor</h4>
+			</div>
+			<div class="modal-body">
+				<input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}">
+				<div class="col-md-6">
+					<div class="form-group has-info">
+						<label class="control-label">Nro Nota de Credito</label><small class="text-info"> Opcional</small>
+						<input type="text" id="nnc" class="form-control">
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group has-info">
+						<label class="control-label">Monto Nota de Credito</label><small class="text-info"> Opcional</small>
+						<input type="number" min="0" value="0" id="mon" class="form-control">
+					</div>
+				</div>
+				<div class="form-group has-info">
+					<label class="control-label">Observación</label>
+					<textarea name="obs" id="obs" rows="4" class="form-control"></textarea>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="Button" data-dismiss="modal" class="btn btn-warning tblack pull-left">
+					<span class="glyphicon glyphicon-remove"></span> Salir
+				</button>
+				<button class="btn btn-info tblack" onClick="continus();">
+					<span class="glyphicon glyphicon-chevron-right"></span> Continuar
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="mdet" class="modal fade in" data-backdrop='static'>
+	<div class="modal-dialog largemo">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4>Editar Cantidades de los materiales</h4>
+			</div>
+			<div class="modal-body">
+				<div class="table-response">
+					<table class="table table-hover table-striped table-condensed">
+						<thead>
+							<tr>
+								<th></th>
+								<th>Codigo</th>
+								<th>Descripción</th>
+								<th>Medida</th>
+								<th>Unidad</th>
+								<th>Cantidad</th>
+							</tr>
+						</thead>
+						<tbody id="tcan">
+							
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-warning tblack" onClick="blacks();">
+					<span class="glyphicon glyphicon-chevron-left"></span> Atrás
+				</button>
+				<button class="btn btn-primary" onClick="saved();">
+					<span class="glyphicon glyphicon-saved"></span> Guardar Cambios
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

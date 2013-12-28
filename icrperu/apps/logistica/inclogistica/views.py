@@ -350,7 +350,7 @@ def ws_list_tmp_cotiza(request):
 			data += "<tr class='warning'>"
 			data += "<td>"+str(i)+"</td>"
 			data += "<td>"+str(x[0])+"</td>"
-			data += "<td>"+str(x[1])+"</td>"
+			data += "<td>"+u''+x[1]+"</td>"
 			data += "<td>"+x[2]+"</td>"
 			data += "<td>"+str(x[3])+"</td>"
 			data += "<td>"+str(x[4])+"</td>"
@@ -649,13 +649,13 @@ def ws_search_distrito(request):
 		data = simplejson.dumps(da)
 		return HttpResponse(data,mimetype='application/json')
 
-@transaction.commit_manually
+@transaction.autocommit
 def ws_save_supplier(request):
 	if request.method == 'GET':
 		da = {}
 		try:
 			cn = connection.cursor()
-			cn.execute("SELECT COUNT(*) FROM admin.proveedor WHERE rucproveedor LIKE '"+request.GET.get('ruc')+"' ")
+			cn.execute("SELECT COUNT(*) FROM admin.proveedor WHERE rucproveedor LIKE %s ", [request.GET.get('ruc')]) 
 			nt = cn.fetchone()
 			cn.close()
 			if nt[0] > 0:
@@ -666,7 +666,7 @@ def ws_save_supplier(request):
 				cn.close()
 			else:
 				cn = connection.cursor()
-				cn.execute("INSERT INTO admin.proveedor VALUES('"+request.GET.get('ruc')+"','"+request.GET.get('rs')+"','"+request.GET.get('dir')+"','"+request.GET.get('paisid')+"','"+request.GET.get('dep')+"','"+request.GET.get('pro')+"','"+request.GET.get('dist')+"','"+request.GET.get('tel')+"','"+request.GET.get('tipo')+"','"+request.GET.get('ori')+"','15','"+request.GET.get('mail')+"')")
+				cn.execute('INSERT INTO admin.proveedor(rucproveedor, razonsocial, direccion, paisid, departamentoid, provinciaid, distritoid, telefono, tipo, origen, esid, email) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)', ( request.GET.get('ruc'),request.GET.get('rs'),request.GET.get('dir'),request.GET.get('pais'),request.GET.get('dep'),request.GET.get('pro'),request.GET.get('dist'),request.GET.get('tel'),request.GET.get('tipo'),request.GET.get('ori'),'15',request.GET.get('mail') ) )
 				transaction.set_dirty()
 				transaction.commit()
 				cn.close()
@@ -676,7 +676,7 @@ def ws_save_supplier(request):
 			raise e
 			da['status'] = 'fail'
 		data = simplejson.dumps(da)
-		return HttpResponse(data,mimetype='application/json')
+		return HttpResponse(data, mimetype='application/json')
 
 @transaction.commit_manually
 def ws_delete_supplier(request):
@@ -1115,5 +1115,91 @@ def ws_update_anular_buy(request):
 			raise e
 			da['status'] = 'fail'
 			transaction.rollback()
+		data = simplejson.dumps(da)
+		return HttpResponse(data, mimetype='application/json')
+
+def wv_list_note_entry(request):
+	if request.method == 'GET':
+		da = {}
+		try:
+			cn = connection.cursor()
+			cn.execute("SELECT d.materialesid,m.matnom,m.matmed,m.matund,d.cantidad FROM almacen.detnotaingreso d INNER JOIN admin.materiales m ON d.materialesid LIKE m.materialesid WHERE d.nroningreso LIKE '"+request.GET.get('nro')+"' ")
+			ldni = dictfetchall(cn)
+			cn.close()
+			da['status'] = 'success'
+			da['list'] = ldni
+		except Exception, e:
+			raise e
+			da['status'] = 'fail'
+		data = simplejson.dumps(da)
+		return HttpResponse(data, mimetype='application/json')
+
+def ws_list_selected_note_returns(request):
+	if request.method == 'GET':
+		da = {}
+		try:
+			cn = connection.cursor()
+			cn.execute("SELECT d.materialesid,m.matnom,m.matmed,m.matund,d.cantidad FROM almacen.detnotaingreso d INNER JOIN admin.materiales m ON d.materialesid LIKE m.materialesid WHERE d.nroningreso LIKE '"+request.GET.get('nro')+"' AND d.materialesid IN ("+request.GET.get('cad')+")")
+			ldni = dictfetchall(cn)
+			cn.close()
+			da['status'] = 'success'
+			da['list'] = ldni
+		except Exception, e:
+			raise e
+			da['status'] = 'fail'
+		data = simplejson.dumps(da)
+		return HttpResponse(data, mimetype='application/json')
+
+@transaction.autocommit
+def ws_saved_returns_supplier_nc(request):
+	if request.method == 'GET':
+		da = {}
+		try:
+			# Obteniendo el codigo de Devolucion
+			cn = connection.cursor()
+			cn.execute("SELECT * FROM logistica.spnewdevolution()")
+			cod = cn.fetchone()
+			cn.close()
+			# Ingresando la cabezera de Devolución
+			cn = connection.cursor()
+			cn.execute('INSERT INTO logistica.devsupplier VALUES(%s,%s,%s,%s,%s,%s,%s)',(cod[0],request.GET.get('nni'),request.GET.get('aid'),request.GET.get('noc'),request.GET.get('nnc'),str(request.GET.get('mon')),request.GET.get('obs')))
+			transaction.set_dirty()
+			transaction.commit()
+			cn.close()
+			# Guardando el detalle de Devolución
+			det = request.GET.get('list')
+			det = simplejson.loads(det)
+			#ca = det[0]
+			#da['list'] = len(det)
+			for x in range(len(det)):
+				cn = connection.cursor()
+				cn.execute('INSERT INTO logistica.detdevsupplier VALUES(%s,%s,%s,%s)',(cod[0],det[x]['mid'],det[x]['cant'],'1'))
+				transaction.set_dirty()
+				transaction.commit()
+				cn.close()
+				# actualizar flag entrada y salida
+				cn = connection.cursor()
+				cn.execute("""SELECT stkact FROM almacen.entradasalida WHERE TRIM(tdoc) LIKE %s AND TRIM(nrodoc) LIKE %s AND almacenid LIKE %s AND materialesid LIKE %s""",('NI',request.GET.get('nni'),request.GET.get('aid'),det[x]['mid']))
+				es = cn.fetchone()
+				cn.close()
+				if det[x]['cant'] > 0 :
+					# update entradasalida
+					cn = connection.cursor()
+					cn.execute("""UPDATE almacen.entradasalida SET cantent = %s, saldo = %s WHERE TRIM(tdoc) LIKE %s AND TRIM(nrodoc) LIKE %s AND almacenid LIKE %s AND materialesid LIKE %s""",(det[x]['cant'],(es[0] + float(det[x]['cant']) ),'NI',request.GET.get('nni'),request.GET.get('aid'),det[x]['mid']))
+					transaction.set_dirty()
+					transaction.commit()
+					cn.close()
+				elif det[x]['cant'] == 0:
+					# update entradasalida
+					cn = connection.cursor()
+					cn.execute("""UPDATE almacen.entradasalida SET cantent = %s, saldo = %s, flag = '0'  WHERE TRIM(tdoc) LIKE %s AND TRIM(nrodoc) LIKE %s AND almacenid LIKE %s AND materialesid LIKE %s""",(det[x]['cant'],(es[0] + float(det[x]['cant']) ),'NI',request.GET.get('nni'),request.GET.get('aid'),det[x]['mid']))
+					transaction.set_dirty()
+					transaction.commit()
+					cn.close()
+
+			da['status'] = 'success'
+		except Exception, e:
+			raise e
+			da['status'] = 'fail'
 		data = simplejson.dumps(da)
 		return HttpResponse(data, mimetype='application/json')

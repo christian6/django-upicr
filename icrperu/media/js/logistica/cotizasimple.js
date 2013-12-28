@@ -216,7 +216,7 @@ function save_cotiza () {
 	$("#mcot").modal("hide");
 	$.msgBox({
 		title : 'Generar Cotización',
-		content : 'Seguro que desea generar Cotización',
+		content : 'Seguro(a) que desea generar Cotización?',
 		type : 'confirm',
 		buttons : [{value:'Si'},{value:'No'}],
 		opacity : 0.8,

@@ -20,7 +20,11 @@
 			</thead>
 			<tbody>
 				{% for row in lcot %}
-					<tr>
+					{% if row.cli == 1 %}
+						<tr class="success text-success">
+					{% else %}
+						<tr>
+					{% endif %}
 					<td class="text-center">{{forloop.counter}}</td>
 					<td>{{row.nrocotizacion}}</td>
 					<td class="text-center">{{row.fecha|date:"SHORT_DATE_FORMAT"}}</td>

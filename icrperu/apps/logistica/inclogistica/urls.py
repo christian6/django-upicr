@@ -50,6 +50,10 @@ urlpatterns = patterns('icrperu.apps.logistica.inclogistica.views',
 	url(r'^saved/login/supplier/$','ws_saved_login_supplier'),
 	url(r'^consulting/order/buy/$','ws_consulting_order_buy'),
 	url(r'^upload/file/stock/$','ws_upload_file_stock'),
+	# Devolucion
+	url(r'^list/note/entry/$','wv_list_note_entry'),
+	url(r'^list/selected/note/returns/$','ws_list_selected_note_returns'),
+	url(r'^saved/returns/supplier/nc/$','ws_saved_returns_supplier_nc'),
 	# -- Tipo de Cambio --
 	url(r'^consulting/type/change/money/$','ws_type_change_money'),
 	

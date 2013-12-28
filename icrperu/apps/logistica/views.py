@@ -112,13 +112,13 @@ def view_list_cotizacion(request):
 		return HttpResponseRedirect('http://190.41.246.91/web/')
 	elif request.method == 'GET':
 		cn = connection.cursor()
-		cn.execute("SELECT DISTINCT c.nrocotizacion,c.fecha,c.fecreq,d.rucproveedor,s.razonsocial FROM "+
+		cn.execute("SELECT DISTINCT c.nrocotizacion,c.fecha,c.fecreq,d.rucproveedor,s.razonsocial, (select COUNT(*) from logistica.cotizacioncli u WHERE u.nrocotizacion LIKE c.nrocotizacion AND esid LIKE '11') as cli FROM "+
 					"logistica.cotizacion c inner join logistica.detcotizacion d "+
 					"ON c.nrocotizacion like d.nrocotizacion "+
 					"INNER JOIN admin.proveedor s "+
 					"ON d.rucproveedor like s.rucproveedor "+
 					"WHERE c.estado like '14' "+
-					"ORDER BY nrocotizacion ASC")
+					"ORDER BY nrocotizacion DESC")
 		lcot = dictfetchall(cn)
 		cn.close()
 		paginator = Paginator(lcot,8)
@@ -319,3 +319,25 @@ def tipo_cambio_sbs():
 		except Exception, e:
 			transaction.rollback()
 			raise e
+
+def view_retuns_supplier(request):
+	if str(request.session.get('access')) != 'success':
+		return HttpResponseRedirect('http://190.41.246.91/web/')
+	elif request.method == 'GET':
+		cn = connection.cursor()
+		cn.execute("SELECT n.nroningreso,n.nrocompra,n.almacenid,a.descri,n.fecha::date FROM almacen.notaingreso n INNER JOIN admin.almacenes a ON n.almacenid LIKE a.almacenid")
+		lni = dictfetchall(cn)
+		cn.close()
+		paginator = Paginator(lni,8)
+		try:
+			page = request.GET['page']
+		except Exception, e:
+			page = ''
+		try:
+			listni = paginator.page(page)
+		except PageNotAnInteger:
+			listni = paginator.page(1)
+		except EmptyPage:
+			listni = paginator.page(paginator.num_pages)
+		ctx = { 'lni':listni }
+		return render_to_response('logistica/devolution_supplier.html',ctx,context_instance=RequestContext(request))

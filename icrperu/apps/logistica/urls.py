@@ -15,6 +15,7 @@ urlpatterns = patterns('icrperu.apps.logistica.views',
 	url(r'^compare/supplier/(?P<nro>.*)/$','view_compare_supplier',name='vw_compare_supplier'),
 	url(r'^list/key/cotizacion/$','view_list_cotizacion_key',name='vw_list_key_cotizacion'),
 	url(r'^order/buy/single$','view_order_buy_single',name='vw_order_buy_single'),
+	url(r'^retuns/supplier/','view_retuns_supplier',name='vw_retuns_supplier'),
 	# Generales
 	url(r'^proveedor/$','view_upkeep_supplier',name='vw_supplier'),
 	url(r'^proveedor/login/$','view_upkeep_supplier_login',name='vw_supplier_login_upkeep'),
